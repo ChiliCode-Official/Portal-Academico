@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   QrCode,
   Award,
@@ -148,87 +149,73 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
 
   return (
     <div className="w-full space-y-6">
-      {/* Student Top Hero Card */}
-      <div className="bg-linear-to-r from-slate-900 via-indigo-950 to-slate-950 text-white rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-400 text-slate-950">
-              <Award className="w-3.5 h-3.5" />
-              <span>Panel del Alumno &bull; Canje y Sellos</span>
+      {/* PRIMARY SECTION: QR Scanner, Stamps Count & Shop Access */}
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-black shadow-[6px_6px_0_#000000] space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          {/* Stamps Count (Cantidad de Sellos QR) */}
+          <div className="md:col-span-5 bg-[#FFFBEB] border-3 border-black rounded-2xl p-6 shadow-[4px_4px_0_#000000] text-center">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-bold bg-amber-400 text-slate-950 border border-black mb-3">
+              <Award className="w-3.5 h-3.5 fill-black" />
+              <span>Billetera de Sellos QR</span>
+            </span>
+            <div className="text-5xl sm:text-6xl font-black font-mono text-slate-950 flex items-center justify-center gap-3 my-1">
+              <Award className="w-10 h-10 text-amber-500 fill-amber-400 drop-shadow-sm" />
+              <span>{profile?.stampsBalance ?? 5}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-['Quicksand'] text-white">
-              Mis Sellos Académicos
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
-              Selecciona tu materia en curso para registrar sellos al término de tu práctica o clase. Tus sellos quedan guardados permanentemente en tu cuenta institucional.
+            <p className="text-xs sm:text-sm font-bold text-amber-950 font-['Quicksand'] mt-2">
+              Sellos acumulados para canjear en la tienda
             </p>
           </div>
 
-          {/* Balance card */}
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-center min-w-[200px] shrink-0">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-amber-300 font-bold block mb-1">
-              Billetera de Sellos
-            </span>
-            <div className="text-3xl sm:text-4xl font-black font-mono text-white flex items-center justify-center gap-2">
-              <Award className="w-7 h-7 text-amber-400 fill-amber-400" />
-              <span>{profile?.stampsBalance ?? 5}</span>
-            </div>
-            <span className="text-[10px] text-slate-300 block mt-1">
-              Sellos disponibles para canjear
-            </span>
+          {/* Action Hub: 1) Escanear QR (Primary Big Button), 2) Tienda */}
+          <div className="md:col-span-7 flex flex-col gap-4">
+            {/* Primary Action Button: ESCÁNER QR */}
+            <button
+              onClick={() => setIsScannerOpen(true)}
+              className="w-full p-5 sm:p-6 bg-amber-400 hover:bg-amber-300 active:translate-x-0.5 active:translate-y-0.5 text-slate-950 rounded-2xl font-black transition-all border-3 border-black shadow-[5px_5px_0_#000000] flex items-center justify-between group cursor-pointer text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-black text-amber-300 flex items-center justify-center shrink-0 border-2 border-black shadow-[2px_2px_0_#fbbf24]">
+                  <QrCode className="w-8 h-8 stroke-[2.5]" />
+                </div>
+                <div>
+                  <span className="text-xs font-mono font-black tracking-widest uppercase bg-black text-amber-300 px-2 py-0.5 rounded text-[10px]">
+                    ★ Cámara Activa
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-black font-['Quicksand'] text-black mt-1">
+                    Escanear Código QR
+                  </h3>
+                  <p className="text-xs text-slate-900 font-semibold mt-0.5">
+                    Apunta al proyector para recibir tus sellos al instante
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-6 h-6 stroke-[3] group-hover:translate-x-1.5 transition-transform shrink-0" />
+            </button>
+
+            {/* Direct access to the Store */}
+            <Link
+              href="/tienda"
+              onClick={onGoToShop}
+              className="w-full p-4 sm:p-5 bg-white hover:bg-slate-50 active:translate-x-0.5 active:translate-y-0.5 text-slate-900 rounded-2xl font-black transition-all border-3 border-black shadow-[4px_4px_0_#000000] flex items-center justify-between group text-left cursor-pointer"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl bg-amber-100 border-2 border-black text-amber-900 flex items-center justify-center shrink-0">
+                  <ShoppingBag className="w-5 h-5 stroke-[2.5]" />
+                </div>
+                <div>
+                  <h4 className="text-sm sm:text-base font-black font-['Quicksand'] text-black">
+                    Ir a la Tienda de la Maestra
+                  </h4>
+                  <p className="text-[11px] text-slate-600 font-medium">
+                    Canjea tus sellos por prórrogas, comodines y décimas
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 stroke-[2.5] group-hover:translate-x-1 transition-transform text-black shrink-0" />
+            </Link>
           </div>
         </div>
-      </div>
-
-      {/* Action Banner: Escanear QR & Ver Tienda */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Button 1: Escanear QR */}
-        <button
-          onClick={() => setIsScannerOpen(true)}
-          className="p-6 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-3xl font-bold transition-all shadow-md flex items-center justify-between group active:scale-98 text-left"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-950 text-amber-400 flex items-center justify-center shrink-0">
-              <QrCode className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="text-xs font-mono font-bold tracking-wider uppercase opacity-80 block">
-                Cámara en vivo
-              </span>
-              <h3 className="text-base sm:text-lg font-extrabold font-['Quicksand']">
-                Escanear Sello QR de la Maestra
-              </h3>
-            </div>
-          </div>
-          <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-        </button>
-
-        {/* Button 2: Ir a la Tienda */}
-        <a
-          href="#tienda-de-la-maestra"
-          onClick={onGoToShop}
-          className="p-6 bg-slate-900 hover:bg-slate-800 text-white rounded-3xl font-bold transition-all shadow-md flex items-center justify-between group active:scale-98 text-left border border-slate-800 relative overflow-hidden"
-        >
-          <div className="flex items-center gap-4 z-10">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 text-white flex items-center justify-center shrink-0">
-              <ShoppingBag className="w-6 h-6 text-amber-400" />
-            </div>
-            <div>
-              <span className="text-xs font-mono font-bold tracking-wider uppercase text-slate-400 block">
-                Catálogo de Canje
-              </span>
-              <h3 className="text-base sm:text-lg font-extrabold font-['Quicksand']">
-                Comprar en la Tienda con mis Sellos
-              </h3>
-            </div>
-          </div>
-          
-          <div className="hidden md:flex items-center shrink-0 -my-6 -mr-4 pointer-events-none scale-75 opacity-90 group-hover:scale-80 transition-transform">
-            <CartLoader text="Canjear" textColor="#F59E0B" />
-          </div>
-
-          <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform text-slate-400 z-10 shrink-0" />
-        </a>
       </div>
 
       {/* Scan feedback toast / card */}

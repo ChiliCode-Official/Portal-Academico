@@ -162,29 +162,29 @@ export default function TeacherPanel() {
   return (
     <div className="w-full space-y-8">
       {/* Teacher Welcome Header */}
-      <div className="bg-linear-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E5E7EB] hover:border-slate-300 shadow-sm transition-all">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-400 text-slate-950">
-              <ShieldCheck className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
               <span>Panel Oficial de la Maestra &bull; Sesión Activa</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-['Quicksand'] text-white">
+            <h2 className="text-2xl sm:text-3xl font-extrabold font-['Quicksand'] text-[#1C1C1C]">
               Gestión de Sellos QR & Clases Académicas
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#4A4A4A] max-w-2xl leading-relaxed">
               Selecciona tu grupo y el tipo de sello que deseas otorgar en la sesión práctica. Se generará un código QR dinámico y seguro que los alumnos escanearán para recibir sus sellos al instante.
             </p>
           </div>
 
-          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl shrink-0 text-center">
-            <span className="text-[11px] font-mono text-slate-400 block uppercase">
+          <div className="p-4 bg-[#FFFBEB] border-2 border-amber-300 rounded-2xl shrink-0 text-center shadow-xs">
+            <span className="text-[11px] font-mono text-amber-800 block uppercase font-bold">
               Docente en línea
             </span>
-            <span className="text-sm font-bold text-amber-300 block font-['Quicksand']">
+            <span className="text-sm font-bold text-slate-900 block font-['Quicksand']">
               {profile?.displayName || 'Prof. Xochitl M. Zapata M.'}
             </span>
-            <span className="text-[11px] text-slate-400 font-mono">
+            <span className="text-[11px] text-amber-900 font-mono font-medium">
               {classes.length} Materias activas
             </span>
           </div>

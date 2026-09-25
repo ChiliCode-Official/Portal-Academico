@@ -110,46 +110,30 @@ export default function TeacherShop({ userStamps }: TeacherShopProps) {
 
   return (
     <div id="tienda-de-la-maestra" className="w-full">
-      {/* Wallet / Stamp simulator card */}
-      <div className="bg-linear-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-2xl p-4 sm:p-6 mb-8 shadow-md border border-slate-700">
+      {/* Wallet / Stamp Balance Card */}
+      <div className="bg-white rounded-3xl p-5 sm:p-6 mb-8 border-2 border-black shadow-[5px_5px_0_#000000]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center shrink-0">
-              <Award className="w-6 h-6 text-amber-300" />
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-amber-400 border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0_#000000]">
+              <Award className="w-8 h-8 text-black fill-black" />
             </div>
             <div>
-              <div className="text-[11px] font-mono uppercase tracking-wider text-amber-300 font-semibold">
-                Billetera de Méritos &bull; Simulador
+              <div className="text-[11px] font-mono uppercase tracking-wider text-amber-900 font-bold">
+                Tu Saldo para Compras
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold font-['Quicksand'] flex items-center gap-2">
+              <h3 className="text-2xl sm:text-3xl font-black font-['Quicksand'] text-black flex items-center gap-2">
                 <span>{stamps} Sellos Disponibles</span>
               </h3>
             </div>
           </div>
 
-          {/* Quick simulation pills to test purchasing */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-slate-300 hidden sm:inline">Simular sellos:</span>
-            <button
-              onClick={() => setStamps((s) => s + 1)}
-              className="px-2.5 py-1 text-xs font-bold bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 rounded-lg transition-all"
+          <div className="flex items-center gap-2 flex-wrap sm:self-center">
+            <Link
+              href="/sellos-qr"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-400 hover:bg-amber-300 text-black border-2 border-black rounded-xl font-black text-xs uppercase tracking-wider font-['Quicksand'] shadow-[2px_2px_0_#000000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
             >
-              +1 Sello
-            </button>
-            <button
-              onClick={() => setStamps((s) => s + 5)}
-              className="px-2.5 py-1 text-xs font-bold bg-amber-400 text-slate-950 hover:bg-amber-300 active:scale-95 rounded-lg transition-all"
-            >
-              +5 Sellos
-            </button>
-            {stamps > 0 && (
-              <button
-                onClick={() => setStamps(0)}
-                className="px-2.5 py-1 text-xs text-slate-400 hover:text-white transition-colors"
-              >
-                Reiniciar
-              </button>
-            )}
+              <span>+ Obtener Sellos con QR</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -211,6 +195,16 @@ export default function TeacherShop({ userStamps }: TeacherShopProps) {
                 {item.isPopular && (
                   <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 border border-slate-900 font-mono">
                     Top
+                  </span>
+                )}
+
+                {item.stampTypeRequired && (
+                  <span className={`absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider font-mono border ${
+                    item.stampTypeRequired === 'Tierra'
+                      ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                      : 'bg-blue-100 text-blue-900 border-blue-300'
+                  }`}>
+                    {item.stampTypeRequired === 'Tierra' ? '🌱 Tierra' : '💧 Agua'}
                   </span>
                 )}
               </div>

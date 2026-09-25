@@ -103,30 +103,31 @@ export default function DinamicaClientPage({ documents }: DinamicaClientPageProp
       {activeTab === 'hub' && (
         <section className="mb-14 space-y-8 animate-in fade-in duration-150">
           {!user ? (
-            /* Call to login with Google */
-            <div className="bg-linear-to-r from-slate-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 sm:p-12 text-center border border-slate-800 shadow-xl max-w-3xl mx-auto">
-              <div className="w-16 h-16 rounded-2xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center mx-auto mb-4">
-                <LogIn className="w-8 h-8 text-amber-400" />
+            /* Clean Institutional Login Card matching portal UX */
+            <div className="bg-white border-2 border-[#E5E7EB] hover:border-slate-400 rounded-3xl p-8 sm:p-12 text-center shadow-sm max-w-2xl mx-auto transition-all">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border-2 border-amber-300 flex items-center justify-center mx-auto mb-4 shadow-xs">
+                <LogIn className="w-8 h-8 text-amber-600" />
               </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 mb-3">
-                <span>Acceso Exclusivo &bull; @my.uvm.edu.mx</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300 mb-3">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                <span>Acceso Institucional Exclusivo &bull; @my.uvm.edu.mx</span>
               </div>
 
-              <h3 className="text-2xl font-bold font-['Quicksand'] text-white mb-2">
-                Inicia Sesión con tu Cuenta Institucional UVM
+              <h3 className="text-2xl sm:text-3xl font-bold font-['Quicksand'] text-[#1C1C1C] mb-2 tracking-tight">
+                Inicia Sesión con tu Cuenta UVM
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto mb-6 leading-relaxed">
-                El acceso a la plataforma de sellos y dinámicas está restringido únicamente a correos con terminación <strong>@my.uvm.edu.mx</strong>. Inicia sesión con tu cuenta Google institucional.
+              <p className="text-xs sm:text-sm text-[#4A4A4A] max-w-md mx-auto mb-6 leading-relaxed">
+                El acceso a la plataforma de sellos y dinámicas está restringido a correos con terminación <strong className="text-slate-900 font-semibold">@my.uvm.edu.mx</strong>. Inicia sesión con tu cuenta Google institucional para continuar.
               </p>
 
               {authError && (
-                <div className="mb-6 p-4 bg-rose-950/80 border border-rose-500 rounded-2xl text-left text-xs text-rose-200 flex items-start gap-3 animate-in fade-in">
-                  <div className="p-1.5 bg-rose-500/20 rounded-lg shrink-0 mt-0.5">
-                    <ShieldCheck className="w-4 h-4 text-rose-400" />
+                <div className="mb-6 p-4 bg-rose-50 border border-rose-300 rounded-2xl text-left text-xs text-rose-800 flex items-start gap-3">
+                  <div className="p-1.5 bg-rose-100 rounded-lg shrink-0 mt-0.5">
+                    <ShieldCheck className="w-4 h-4 text-rose-600" />
                   </div>
                   <div className="flex-1 space-y-1">
-                    <strong className="block text-rose-100 font-semibold">Restricción de Dominio</strong>
+                    <strong className="block text-rose-900 font-semibold">Restricción de Dominio</strong>
                     <span>{authError}</span>
                   </div>
                 </div>
@@ -134,10 +135,11 @@ export default function DinamicaClientPage({ documents }: DinamicaClientPageProp
 
               <button
                 onClick={() => signInWithGoogle()}
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-extrabold text-xs sm:text-sm font-['Quicksand'] uppercase tracking-wider transition-all shadow-md active:scale-95"
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 rounded-xl font-black text-xs sm:text-sm font-['Quicksand'] uppercase tracking-wider transition-all shadow-sm border border-amber-500 cursor-pointer"
               >
+                <LogIn className="w-4 h-4 stroke-[2.5]" />
                 <span>Entrar con Google (@my.uvm.edu.mx)</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </button>
             </div>
           ) : isTeacher ? (

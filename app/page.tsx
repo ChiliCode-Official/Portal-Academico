@@ -197,7 +197,7 @@ export default function HomePage() {
                 {/* CTAs */}
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <Link
-                    href="/dinamica-de-clase#tienda-de-la-maestra"
+                    href="/tienda"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-black text-black bg-[#fbbf24] hover:bg-[#f59e0b] active:translate-x-0.5 active:translate-y-0.5 border-3 border-black shadow-[4px_4px_0_#000000] rounded-xl transition-all font-['Quicksand'] uppercase tracking-wider cursor-pointer"
                   >
                     <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
@@ -216,7 +216,7 @@ export default function HomePage() {
               {/* Right Column: Interactive Cart Animation Card */}
               <div className="lg:col-span-5 flex justify-center items-center">
                 <Link
-                  href="/dinamica-de-clase#tienda-de-la-maestra"
+                  href="/tienda"
                   className="w-full max-w-xs bg-slate-950 hover:bg-slate-900 border-3 border-black rounded-2xl p-5 shadow-[6px_6px_0_#000000] transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_#000000] flex flex-col items-center justify-center group cursor-pointer"
                   title="Haz clic para explorar los artículos de la tienda"
                 >

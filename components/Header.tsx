@@ -28,7 +28,8 @@ export default function Header() {
 
   const navLinks = [
     { label: 'Página principal', href: '/' },
-    { label: 'Tienda de la Maestra', href: '/dinamica-de-clase#tienda-de-la-maestra' },
+    { label: 'Tienda de la Maestra', href: '/tienda' },
+    { label: 'Sellos QR', href: '/sellos-qr' },
     { label: 'Dinámica de Clase', href: '/dinamica-de-clase' },
   ];
 
