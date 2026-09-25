@@ -1,0 +1,76 @@
+/* From Uiverse.io by vaibhavchandranv - Neobrutalist Window Card */
+.neobrutal-window {
+  width: 100%;
+  background: #fdfbf7;
+  border: 3px solid #000000;
+  box-shadow: 10px 10px 0 #000000;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.neobrutal-window:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 13px 13px 0 #000000;
+}
+
+.neobrutal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #ffffff;
+  padding: 8px 16px;
+  color: #000000;
+  border-bottom: 3px solid #000000;
+  font-family: var(--font-quicksand), sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.neobrutal-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.neobrutal-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+}
+
+.neobrutal-content {
+  padding: 24px;
+}
+
+.neobrutal-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  margin-top: 14px;
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0 #000000;
+  font-weight: 750;
+  font-size: 13px;
+  background: #4ade80;
+  color: #000000;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.neobrutal-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #000000;
+  background: #38bdf8;
+}
+
+.neobrutal-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #000000;
+}

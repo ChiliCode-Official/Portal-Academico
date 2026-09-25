@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Menu, X, BookOpen, GraduationCap } from 'lucide-react';
+import { Search, Menu, X, BookOpen } from 'lucide-react';
 import GlobalSearchModal from '@/components/GlobalSearchModal';
+import AtomLoader from '@/components/AtomLoader';
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -37,9 +38,7 @@ export default function Header() {
             href="/"
             className="flex items-center space-x-2.5 text-[#1C1C1C] hover:opacity-90 transition-opacity shrink-0"
           >
-            <div className="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center shadow-xs">
-              <GraduationCap className="w-5 h-5" />
-            </div>
+            <AtomLoader />
             <div>
               <span className="text-base sm:text-lg font-bold font-['Quicksand'] tracking-tight block leading-none">
                 Portal Académico
