@@ -1,0 +1,17 @@
+{
+  "name": "Portal Académico - Prof. Xochitl M. Zapata M.",
+  "short_name": "Portal Académico",
+  "description": "Repositorio académico institucional de ingeniería, manuales de laboratorio, bitácoras y tienda de habilidades.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F9F9F9",
+  "theme_color": "#0F172A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

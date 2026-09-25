@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // REQUISITO ESTRICTO DE DOMINIO INSTITUCIONAL:
+    // Solo se permite acceso si el correo termina en @my.uvm.edu.mx
+    function isInstitutionalEmail() {
+      return isAuthenticated() &&
+        request.auth.token.email != null &&
+        request.auth.token.email.matches('.*@my[.]uvm[.]edu[.]mx$');
+    }
+
+    function isUser(uid) {
+      return isInstitutionalEmail() && request.auth.uid == uid;
+    }
+
+    // Identificar a la maestra dentro del dominio institucional
+    function isTeacher() {
+      return isInstitutionalEmail() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
+        request.auth.token.email.matches('.*xochitl.*@my[.]uvm[.]edu[.]mx$') ||
+        request.auth.token.email.matches('.*prof.*@my[.]uvm[.]edu[.]mx$')
+      );
+    }
+
+    // 1. Colección de Perfiles de Usuarios
+    match /users/{userId} {
+      allow read: if isInstitutionalEmail();
+      allow create: if isUser(userId);
+      allow update: if isUser(userId) || isTeacher();
+      allow delete: if isTeacher();
+    }
+
+    // 2. Colección de Clases impartidas por la Maestra
+    match /classes/{classId} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
+
+    // 3. Tipos / Catálogo de Sellos Formativos
+    match /stampTypes/{stampTypeId} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
+
+    // 4. Códigos QR generados para otorgar sellos
+    match /qrCodes/{qrId} {
+      allow read: if isInstitutionalEmail();
+      allow create, delete: if isTeacher();
+      allow update: if isInstitutionalEmail();
+    }
+
+    // 5. Historial de Reclamaciones de Sellos
+    match /claims/{claimId} {
+      allow read: if isInstitutionalEmail() && (resource.data.studentUid == request.auth.uid || isTeacher());
+      allow create: if isInstitutionalEmail() && request.resource.data.studentUid == request.auth.uid;
+      allow update, delete: if isTeacher();
+    }
+
+    // 6. Historial de Canjes en la Tienda
+    match /purchases/{purchaseId} {
+      allow read: if isInstitutionalEmail() && (resource.data.studentUid == request.auth.uid || isTeacher());
+      allow create: if isInstitutionalEmail() && request.resource.data.studentUid == request.auth.uid;
+      allow update, delete: if isTeacher();
+    }
+  }
+}

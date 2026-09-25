@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Menu, X, BookOpen } from 'lucide-react';
+import { Search, Menu, X, BookOpen, Award } from 'lucide-react';
 import GlobalSearchModal from '@/components/GlobalSearchModal';
 import AtomLoader from '@/components/AtomLoader';
+import { useAuth } from '@/lib/firebase/AuthContext';
 
 export default function Header() {
+  const { user, profile, signInWithGoogle, signOut } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -26,6 +28,7 @@ export default function Header() {
 
   const navLinks = [
     { label: 'Página principal', href: '/' },
+    { label: 'Tienda de la Maestra', href: '/dinamica-de-clase#tienda-de-la-maestra' },
     { label: 'Dinámica de Clase', href: '/dinamica-de-clase' },
   ];
 
@@ -69,7 +72,7 @@ export default function Header() {
             })}
           </nav>
 
-          {/* Search Trigger and Mobile Menu Button */}
+          {/* Search Trigger, User Auth and Mobile Menu Button */}
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -78,11 +81,53 @@ export default function Header() {
               title="Buscar en todo el repositorio (Ctrl + K)"
             >
               <Search className="w-4 h-4 text-slate-500" />
-              <span className="hidden sm:inline">Buscar recursos...</span>
+              <span className="hidden sm:inline">Buscar...</span>
               <kbd className="hidden lg:inline-block px-1.5 py-0.5 text-[10px] font-mono text-slate-500 bg-white border border-slate-200 rounded">
                 Ctrl K
               </kbd>
             </button>
+
+            {/* Google User Auth */}
+            {user ? (
+              <div className="flex items-center gap-2 pl-1 border-l border-slate-200">
+                {/* User role and stamps badge */}
+                <Link
+                  href="/dinamica-de-clase"
+                  className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 transition-colors"
+                  title="Tus sellos acumulados"
+                >
+                  <Award className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
+                  <span>{profile?.stampsBalance ?? 5} sellos</span>
+                </Link>
+
+                <div className="relative group">
+                  <button
+                    onClick={() => signOut()}
+                    className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-amber-400 transition-all text-left"
+                    title={`Conectado como ${user.displayName || user.email} (${profile?.role === 'teacher' ? 'Docente' : 'Alumno'}). Clic para cerrar sesión`}
+                  >
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt="Avatar"
+                        className="w-8 h-8 rounded-full border border-slate-300 object-cover"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs font-mono">
+                        {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => signInWithGoogle()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold font-['Quicksand'] transition-all shadow-xs"
+              >
+                <span>Acceder</span>
+              </button>
+            )}
 
             {/* Mobile hamburger */}
             <button

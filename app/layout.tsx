@@ -30,7 +30,22 @@ export const metadata: Metadata = {
   title: 'Portal Académico | Prof. Xochitl M. Zapata M.',
   description:
     'Repositorio institucional de ingeniería, manuales de laboratorio, bitácoras y recursos académicos de cátedra.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Portal Académico',
+  },
 };
+
+export const viewport = {
+  themeColor: '#0F172A',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
+import { AuthProvider } from '@/lib/firebase/AuthContext';
 
 export default function RootLayout({
   children,
@@ -43,10 +58,12 @@ export default function RootLayout({
       className={`${pacifico.variable} ${quicksand.variable} ${roboto.variable}`}
     >
       <body className="min-h-screen flex flex-col bg-[#F9F9F9] text-[#1C1C1C] antialiased selection:bg-slate-200">
-        <Header />
-        <Breadcrumbs />
-        <main className="flex-1 flex flex-col">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <Breadcrumbs />
+          <main className="flex-1 flex flex-col">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

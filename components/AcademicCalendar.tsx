@@ -165,17 +165,17 @@ export default function AcademicCalendar() {
   };
 
   return (
-    <section className="py-12 px-4 sm:px-8 max-w-7xl mx-auto">
+    <section className="py-6 sm:py-12 px-3 sm:px-8 max-w-7xl mx-auto">
       {/* Neobrutalist Window Container */}
       <div className="neobrutal-window bg-white">
         {/* Header */}
-        <div className="neobrutal-head">
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="w-4 h-4 text-red-600" />
-            <span className="font-bold">Periodo Escolar 2/2026 | 20 Semanas Lectivas</span>
+        <div className="neobrutal-head text-xs sm:text-sm py-2 px-3 sm:px-4">
+          <div className="flex items-center gap-2 truncate">
+            <CalendarIcon className="w-4 h-4 text-red-600 shrink-0" />
+            <span className="font-bold truncate">Periodo 2/2026 &bull; 20 Semanas</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-slate-500 hidden sm:inline">OFICIAL</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[10px] sm:text-[11px] font-mono text-slate-500 hidden sm:inline">OFICIAL</span>
             <div className="neobrutal-window-controls">
               <span className="neobrutal-dot bg-[#ff5f56]" />
               <span className="neobrutal-dot bg-[#ffbd2e]" />
@@ -185,11 +185,11 @@ export default function AcademicCalendar() {
         </div>
 
         {/* Content */}
-        <div className="p-6 sm:p-8">
+        <div className="p-3 sm:p-8">
           {/* Top Info Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b-2 border-slate-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-8 pb-3 sm:pb-4 border-b-2 border-slate-200">
             <div>
-              <h2 className="text-2xl font-black font-['Quicksand'] text-slate-900 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-black font-['Quicksand'] text-slate-900 tracking-tight">
                 Calendario Académico Institucional
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
@@ -201,20 +201,20 @@ export default function AcademicCalendar() {
               href="/docs/institucional/calendario-escolar-2026.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all shadow-xs shrink-0 self-start sm:self-auto"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all shadow-xs shrink-0 self-start sm:self-auto"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Descargar PDF</span>
             </a>
           </div>
 
-          {/* 6 Months Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {/* 6 Months Grid: 2 columns on phone (grid rows of 2), 3 on tablet/laptop, 6 on desktop */}
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-4">
             {MONTHS.map((month) => {
               const days = [];
               // Empty cells before start of month
               for (let i = 0; i < month.firstDayOfWeek; i++) {
-                days.push(<div key={`empty-${i}`} className="h-7 w-7" />);
+                days.push(<div key={`empty-${i}`} className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />);
               }
               // Month days
               for (let d = 1; d <= month.daysInMonth; d++) {
@@ -225,7 +225,7 @@ export default function AcademicCalendar() {
                     key={`day-${d}`}
                     onClick={() => event && setSelectedEvent(event)}
                     title={event ? `${d} ${month.name}: ${event.title}` : `${d} ${month.name}`}
-                    className={`h-7 w-7 flex items-center justify-center text-[11px] rounded transition-all select-none ${dayClass}`}
+                    className={`h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 flex items-center justify-center text-[10px] sm:text-xs font-semibold rounded transition-all select-none active:scale-90 ${dayClass}`}
                   >
                     {d}
                   </button>
@@ -256,7 +256,7 @@ export default function AcademicCalendar() {
                   </div>
 
                   {/* Calendar Grid Days */}
-                  <div className="grid grid-cols-7 gap-1 p-2 justify-items-center">
+                  <div className="grid grid-cols-7 gap-0.5 sm:gap-1 p-1.5 sm:p-2 justify-items-center">
                     {days}
                   </div>
                 </div>

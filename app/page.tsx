@@ -1,12 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { ArrowRight, BookOpen, ShoppingBag, Sparkles } from 'lucide-react';
 import TechText from '@/components/TechText';
 import StrokeText from '@/components/StrokeText';
 import PencilBadge from '@/components/PencilBadge';
 import QuickSubjectsBar from '@/components/QuickSubjectsBar';
 import SplitText from '@/components/SplitText';
 import AcademicCalendar from '@/components/AcademicCalendar';
+import CartLoader from '@/components/CartLoader';
 import '@/components/NeobrutalWindow.css';
 
 export default function HomePage() {
@@ -67,24 +68,11 @@ export default function HomePage() {
             />
           </div>
 
-          {/* Subtítulo / Descripción animada con StrokeText: contorno negro y texto negro */}
-          <div className="w-full max-w-3xl mx-auto mt-3 mb-2">
-            <StrokeText
-              text="Plataforma centralizada para la consulta de programas analíticos, manuales de laboratorio, bitácoras experimentales y dinámicas pedagógicas."
-              strokeColor="#000000"
-              fillColor="#000000"
-              strokeWidth={1}
-              drawDuration={2.0}
-              fillDelay={0.3}
-              stagger={0.015}
-              ease="power2.out"
-              trigger="mount"
-              fillMode="wipe"
-              fontSize={18}
-              fontWeight={500}
-              letterSpacing={-0.2}
-              delay={2.6}
-            />
+          {/* Subtítulo / Descripción: totalmente legible y optimizada para teléfonos y desktop */}
+          <div className="w-full max-w-2xl mx-auto mt-4 mb-2 px-2">
+            <p className="text-sm sm:text-base md:text-lg text-slate-800 font-medium leading-relaxed sm:leading-normal text-balance antialiased animate-in fade-in slide-in-from-bottom-2 duration-700 delay-300">
+              Plataforma centralizada para la consulta de programas analíticos, manuales de laboratorio, bitácoras experimentales y dinámicas pedagógicas.
+            </p>
           </div>
         </div>
       </section>
@@ -149,27 +137,99 @@ export default function HomePage() {
       {/* Calendario Académico Institucional */}
       <AcademicCalendar />
 
-      {/* Dinámica de Clase Quick Access Banner */}
-      <section className="py-8 px-4 sm:px-8 max-w-7xl mx-auto mb-12">
-        <div className="bg-slate-900 text-white rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 font-mono">
-              Evaluación Continua y Participación
-            </span>
-            <h3 className="text-xl sm:text-2xl font-bold font-['Quicksand']">
-              Dinámica de Clase: Tienda de Habilidades y Sellos
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Consulta los lineamientos sobre canje de puntos de participación, sistema de sellos formativos y lineamientos complementarios de dinámica grupal.
-            </p>
+      {/* Tienda de la Maestra - Tienda de Habilidades y Sellos Quick Access */}
+      <section className="py-8 px-4 sm:px-8 max-w-5xl mx-auto mb-12">
+        <div className="neobrutal-window bg-[#fffdfa] border-3 border-black shadow-[8px_8px_0_#000000] rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[12px_12px_0_#000000]">
+          {/* Header Bar */}
+          <div className="bg-[#fbbf24] px-4 sm:px-6 py-3 border-b-3 border-black flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-black text-amber-300 font-black text-xs">
+                ★
+              </span>
+              <span className="font-extrabold text-xs sm:text-sm text-black uppercase tracking-wider font-['Quicksand']">
+                Dinámica de Clase &bull; Sellos Formativos
+              </span>
+            </div>
+            <div className="neobrutal-window-controls hidden sm:flex">
+              <span className="neobrutal-dot bg-[#ff5f56]" />
+              <span className="neobrutal-dot bg-[#ffbd2e]" />
+              <span className="neobrutal-dot bg-[#27c93f]" />
+            </div>
           </div>
-          <Link
-            href="/dinamica-de-clase"
-            className="shrink-0 inline-flex items-center gap-2 px-5 py-3 text-xs font-bold text-slate-900 bg-white hover:bg-slate-100 rounded-xl transition-colors font-['Quicksand'] uppercase tracking-wider"
-          >
-            <span>Ver Dinámica</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+
+          {/* Card Body */}
+          <div className="p-5 sm:p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Left Column: Description & CTAs */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-black text-amber-300 border-2 border-black font-mono shadow-[2px_2px_0_#fbbf24]">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                    Tienda de la Maestra
+                  </span>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 font-mono">
+                    Canje por Sellos QR
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-black font-['Quicksand'] tracking-tight leading-tight">
+                    Tienda de Habilidades y Recompensas
+                  </h3>
+                  <p className="mt-2 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                    ¡Aprovecha tus sellos acumulados en clase! Canjea prórrogas en tareas, comodines para exámenes, décimas directas en evaluación continua y pases de laboratorio con la <strong className="text-black font-bold">Prof. Xochitl</strong>.
+                  </p>
+                </div>
+
+                {/* Perk tags */}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <span className="px-2.5 py-1 text-[11px] font-bold bg-white text-slate-800 rounded-md border-2 border-black shadow-[2px_2px_0_#000]">
+                    ⏰ Prórrogas de Tarea
+                  </span>
+                  <span className="px-2.5 py-1 text-[11px] font-bold bg-white text-slate-800 rounded-md border-2 border-black shadow-[2px_2px_0_#000]">
+                    🃏 Comodines de Examen
+                  </span>
+                  <span className="px-2.5 py-1 text-[11px] font-bold bg-white text-slate-800 rounded-md border-2 border-black shadow-[2px_2px_0_#000]">
+                    ✨ Décimas Extra
+                  </span>
+                </div>
+
+                {/* CTAs */}
+                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <Link
+                    href="/dinamica-de-clase#tienda-de-la-maestra"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-black text-black bg-[#fbbf24] hover:bg-[#f59e0b] active:translate-x-0.5 active:translate-y-0.5 border-3 border-black shadow-[4px_4px_0_#000000] rounded-xl transition-all font-['Quicksand'] uppercase tracking-wider cursor-pointer"
+                  >
+                    <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
+                    <span>Entrar a la Tienda</span>
+                    <ArrowRight className="w-4 h-4 ml-0.5 stroke-[2.5]" />
+                  </Link>
+                  <Link
+                    href="/dinamica-de-clase"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-bold text-slate-800 hover:text-black bg-white hover:bg-slate-100 active:translate-x-0.5 active:translate-y-0.5 border-2 border-black shadow-[3px_3px_0_#000000] rounded-xl transition-all font-['Quicksand'] uppercase tracking-wider"
+                  >
+                    <span>Ver Lineamientos</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right Column: Interactive Cart Animation Card */}
+              <div className="lg:col-span-5 flex justify-center items-center">
+                <Link
+                  href="/dinamica-de-clase#tienda-de-la-maestra"
+                  className="w-full max-w-xs bg-slate-950 hover:bg-slate-900 border-3 border-black rounded-2xl p-5 shadow-[6px_6px_0_#000000] transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_#000000] flex flex-col items-center justify-center group cursor-pointer"
+                  title="Haz clic para explorar los artículos de la tienda"
+                >
+                  <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20 mb-3">
+                    Catálogo Activo &bull; Toca para abrir
+                  </div>
+                  <div className="py-2">
+                    <CartLoader text="Abrir Tienda" textColor="#FBBF24" />
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>

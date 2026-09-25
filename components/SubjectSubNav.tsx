@@ -18,8 +18,8 @@ export default function SubjectSubNav({ basePath, items }: SubjectSubNavProps) {
   const pathname = usePathname();
 
   return (
-    <div className="w-full border-b border-[#E5E7EB] bg-white overflow-x-auto scrollbar-none mb-8">
-      <nav className="flex space-x-1 sm:space-x-2 py-2 px-1 text-xs font-medium font-['Quicksand'] whitespace-nowrap">
+    <div className="w-full border-b border-[#E5E7EB] bg-white overflow-x-auto scrollbar-none mb-6 sm:mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
+      <nav className="flex space-x-1.5 sm:space-x-2 py-2.5 px-0.5 text-xs font-medium font-['Quicksand'] whitespace-nowrap">
         <Link
           href={basePath}
           className={`px-3 py-1.5 rounded-lg transition-colors ${
