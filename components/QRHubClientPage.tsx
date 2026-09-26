@@ -112,7 +112,7 @@ export default function QRHubClientPage() {
             </button>
           </div>
         ) : isTeacher ? (
-          <TeacherPanel />
+          <TeacherPanel compact />
         ) : (
           <StudentPanel />
         )}

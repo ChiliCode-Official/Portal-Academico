@@ -20,7 +20,7 @@ import { defaultClasses } from '@/lib/firebase/initialData';
 import QRScannerModal from '@/components/QRScannerModal';
 import CartLoader from '@/components/CartLoader';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { doc, getDoc, updateDoc, increment, collection, addDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment, collection, addDoc, onSnapshot, arrayUnion } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 
 interface StudentPanelProps {
@@ -39,7 +39,10 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
   } | null>(null);
   const [isValidating, setIsValidating] = useState(false);
 
-  useEffect(() => onSnapshot(collection(db, 'classes'), snap => setClasses(snap.docs.map(item => ({ ...item.data(), id: item.id } as AcademicClass)))), []);
+  useEffect(() => {
+    if (!user) return;
+    return onSnapshot(collection(db, 'classes'), snap => setClasses(snap.docs.map(item => ({ ...item.data(), id: item.id } as AcademicClass))));
+  }, [user]);
   const approvedClasses = classes.filter(c => profile?.classIds?.includes(c.id));
   const selectedClass = approvedClasses[0];
 
@@ -77,6 +80,11 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
       }
 
       const qrData = qrSnap.data();
+      if (qrData.active !== true) {
+        setScanResult({ success: false, message: 'La maestra desactivó este código QR.' });
+        setIsValidating(false);
+        return;
+      }
       if (!profile?.classIds?.includes(qrData.classId)) {
         setScanResult({ success: false, message: 'Este código corresponde a una clase en la que no estás inscrito.' });
         return;
@@ -107,8 +115,9 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
 
       // Update QR doc to record this student
       await updateDoc(qrDocRef, {
+        active: false,
         claimedCount: increment(1),
-        claimedBy: [...claimedByList, user?.uid || 'anonymous'],
+        claimedBy: arrayUnion(user?.uid),
       });
 
       // Update student profile in Firestore
@@ -155,6 +164,9 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
     <div className="w-full space-y-6">
       {/* PRIMARY SECTION: QR Scanner, Stamps Count & Shop Access */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-black shadow-[6px_6px_0_#000000] space-y-6">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-slate-700">
+          <strong className="text-slate-950">¿Cómo funciona la seguridad?</strong> Cada código QR se puede canjear una sola vez por alumno. Compartir una foto no permite repetirlo en tu cuenta; el QR seguirá disponible para otros alumnos de la clase hasta que la maestra lo desactive.
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           {/* Stamps Count (Cantidad de Sellos QR) */}
           <div className="md:col-span-5 bg-[#FFFBEB] border-3 border-black rounded-2xl p-6 shadow-[4px_4px_0_#000000] text-center">
@@ -164,7 +176,7 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
             </span>
             <div className="text-5xl sm:text-6xl font-black font-mono text-slate-950 flex items-center justify-center gap-3 my-1">
               <Award className="w-10 h-10 text-amber-500 fill-amber-400 drop-shadow-sm" />
-              <span>{profile?.stampsBalance ?? 5}</span>
+              <span>{profile?.stampsBalance ?? 0}</span>
             </div>
             <p className="text-xs sm:text-sm font-bold text-amber-950 font-['Quicksand'] mt-2">
               Sellos acumulados para canjear en la tienda
@@ -261,10 +273,10 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900 font-['Quicksand']">
-                Selecciona tu Clase / Asignatura
+                Mis clases aprobadas
               </h3>
               <p className="text-[11px] text-slate-500">
-                La maestra imparte diversas materias; confirma en cuál estás inscrito
+                Solo la maestra puede cambiar tu inscripción
               </p>
             </div>
           </div>

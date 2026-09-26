@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { X, ExternalLink, Download, AlertCircle } from 'lucide-react';
+import DocumentDownload from './DocumentDownload';
 
 interface PDFViewerModalProps {
   isOpen: boolean;
@@ -69,15 +70,14 @@ export default function PDFViewerModal({
               <ExternalLink className="w-4 h-4" />
               <span className="hidden sm:inline">Pestaña nueva</span>
             </a>
-            <a
-              href={fileUrl}
-              download
+            <DocumentDownload
+              fileUrl={fileUrl}
+              title={title}
               className="p-2 text-slate-600 hover:text-[#1C1C1C] hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5 text-xs font-medium"
-              title="Descargar documento"
             >
               <Download className="w-4 h-4" />
               <span className="hidden sm:inline">Descargar</span>
-            </a>
+            </DocumentDownload>
             <button
               onClick={onClose}
               className="p-2 text-slate-400 hover:text-[#1C1C1C] hover:bg-slate-200 rounded-lg transition-colors ml-1"

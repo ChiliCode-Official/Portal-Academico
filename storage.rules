@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function teacher() {
+      return request.auth != null && request.auth.token.email != null &&
+        (request.auth.token.email == 'xochitl_zapatam@my.uvm.edu.mx' || request.auth.token.email == 'lrodricg30@gmail.com');
+    }
+    function institutional() {
+      return request.auth != null && request.auth.token.email != null &&
+        (request.auth.token.email.matches('.*@my[.]uvm[.]edu[.]mx$') || request.auth.token.email == 'lrodricg30@gmail.com');
+    }
+        match /documents/{fileName} {
+          allow read: if institutional();
+          allow delete: if teacher();
+          allow create, update: if teacher() && request.resource != null &&
+        request.resource.contentType == 'application/pdf' &&
+        request.resource.size < 15 * 1024 * 1024;
+    }
+  }
+}

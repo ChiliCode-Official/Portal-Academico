@@ -21,11 +21,12 @@ import { AcademicClass, StampType, StampRedemptionCode } from '@/lib/firebase/mo
 import { defaultClasses, defaultStampTypes } from '@/lib/firebase/initialData';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { collection, addDoc, getDocs, doc, setDoc, deleteDoc, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, deleteDoc, query, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import TeacherAdministration from '@/components/TeacherAdministration';
+import AcademicCalendar from '@/components/AcademicCalendar';
 
-export default function TeacherPanel() {
+export default function TeacherPanel({ compact = false }: { compact?: boolean }) {
   const { user, profile } = useAuth();
   const [classes, setClasses] = useState<AcademicClass[]>(defaultClasses);
   const [stampTypes, setStampTypes] = useState<StampType[]>(defaultStampTypes);
@@ -34,6 +35,16 @@ export default function TeacherPanel() {
   const [activeQR, setActiveQR] = useState<StampRedemptionCode | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!activeQR?.code || !activeQR.active) return;
+    return onSnapshot(doc(db, 'qrCodes', activeQR.code), snapshot => {
+      const data = snapshot.data();
+      if (data?.active === false && Number(data.claimedCount || 0) > 0) {
+        void handleGenerateQR();
+      }
+    });
+  }, [activeQR?.code, activeQR?.active]);
 
   // New Class Form State
   const [isCreatingClass, setIsCreatingClass] = useState(false);
@@ -114,6 +125,17 @@ export default function TeacherPanel() {
     setTimeout(() => setStatusMsg(null), 4000);
   };
 
+  const handleDeactivateQR = async () => {
+    if (!activeQR) return;
+    try {
+      await updateDoc(doc(db, 'qrCodes', activeQR.code), { active: false });
+      setActiveQR((current) => current ? { ...current, active: false } : current);
+      setStatusMsg('Código QR desactivado. Ya no puede ser canjeado.');
+    } catch {
+      setStatusMsg('No se pudo desactivar el código QR.');
+    }
+  };
+
   // Add a new class panel
   const handleCreateClass = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,7 +187,8 @@ export default function TeacherPanel() {
 
   return (
     <div className="w-full space-y-8">
-      <TeacherAdministration />
+      {!compact && <TeacherAdministration />}
+      {!compact && <div className="rounded-3xl border-2 border-slate-200 bg-white p-3 shadow-sm"><AcademicCalendar editable /></div>}
       {/* Teacher Welcome Header */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E5E7EB] hover:border-slate-300 shadow-sm transition-all">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -175,7 +198,7 @@ export default function TeacherPanel() {
               <span>Panel Oficial de la Maestra &bull; Sesión Activa</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold font-['Quicksand'] text-[#1C1C1C]">
-              Gestión de Sellos QR & Clases Académicas
+              {compact ? 'Generar sellos QR' : 'Gestión de Sellos QR y Clases Académicas'}
             </h2>
             <p className="text-xs sm:text-sm text-[#4A4A4A] max-w-2xl leading-relaxed">
               Selecciona tu grupo y el tipo de sello que deseas otorgar en la sesión práctica. Se generará un código QR dinámico y seguro que los alumnos escanearán para recibir sus sellos al instante.
@@ -206,7 +229,7 @@ export default function TeacherPanel() {
       {/* Main Grid: Left = QR Generator, Right = Classes & Stamp Types */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: QR Code Creator & Display (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className={`${compact ? 'lg:col-span-12' : 'lg:col-span-7'} space-y-6`}>
           <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
             <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-slate-100">
               <div className="p-2.5 bg-amber-100 text-amber-900 rounded-xl">
@@ -335,16 +358,20 @@ export default function TeacherPanel() {
           {/* Render Active QR Display */}
           {activeQR && (
             <div className="animate-in fade-in slide-in-from-bottom-3 duration-200">
+              <div className="mb-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950">
+                <strong>Seguridad del código:</strong> cada alumno puede canjear este QR una sola vez. Mientras permanezca activo, otros alumnos inscritos en esta clase también podrán usarlo. Desactívalo cuando termine la actividad para impedir nuevos canjes.
+              </div>
               <QRCodeDisplay
                 redemptionCode={activeQR}
                 onRefresh={handleGenerateQR}
               />
+              <button type="button" onClick={handleDeactivateQR} disabled={!activeQR.active} className="mt-3 w-full rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50">{activeQR.active ? 'Desactivar QR y cerrar canjes' : 'QR desactivado'}</button>
             </div>
           )}
         </div>
 
         {/* Right Column: Manage Classes (Paneles que la maestra puede editar) (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        {!compact && <div className="lg:col-span-5 space-y-6">
           <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
@@ -483,7 +510,7 @@ export default function TeacherPanel() {
               </p>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

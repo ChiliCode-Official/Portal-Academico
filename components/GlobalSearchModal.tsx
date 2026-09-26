@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { Search, X, FileText, BookOpen, ArrowRight, CornerDownLeft } from 'lucide-react';
 import { DocumentItem, SubjectItem } from '@/lib/types';
-import { documentsData } from '@/data/documents';
+import { useCourseContent } from './CourseContent';
 import { subjectsData } from '@/data/subjects';
 
 interface GlobalSearchModalProps {
@@ -17,6 +17,8 @@ export default function GlobalSearchModal({
   onClose,
 }: GlobalSearchModalProps) {
   const [query, setQuery] = useState('');
+  const { documents: catalogDocuments, pages, error } = useCourseContent();
+  const documentsData = useMemo(() => error ? [] : catalogDocuments.filter(item => item.published && pages[`${item.subjectId}--${item.category}`]?.visible !== false), [catalogDocuments, pages, error]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -73,7 +75,7 @@ export default function GlobalSearchModal({
       subjects: matchedSubjects,
       documents: matchedDocuments,
     };
-  }, [query]);
+  }, [query, documentsData]);
 
   if (!isOpen) return null;
 

@@ -37,7 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
+    let unsubscribeProfile: (() => void) | undefined;
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      unsubscribeProfile?.();
+      unsubscribeProfile = undefined;
+      setProfile(null);
+      setLoading(true);
       if (!currentUser) {
         setUser(null);
         setProfile(null);
@@ -81,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             photoURL: currentUser.photoURL,
             role: isProf ? 'teacher' : 'student',
             requestedClassIds: [],
+            ...(isProf ? { enrollmentStatus: 'approved' as const } : {}),
             classIds: [],
             onboardingComplete: isProf,
             stampsBalance: 0,
@@ -93,22 +99,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await setDoc(userDocRef, newProfile);
             setProfile(newProfile);
           } catch (e) {
-            console.error('No se pudo crear el perfil:', e);
-            setAuthError('No se pudo guardar tu cuenta. Intenta de nuevo.');
+            console.error('No se pudo guardar el perfil:', e);
+            setAuthError('No se pudo guardar tu cuenta en Firebase. Revisa la conexión o las reglas de acceso.');
           }
         }
         setLoading(false);
       }, (error) => {
-        console.warn('Firestore onSnapshot error:', error);
-        setAuthError('No se pudo leer tu cuenta. Revisa tu conexión.');
+        console.error('Firestore onSnapshot error:', error);
         setProfile(null);
         setLoading(false);
+        setAuthError('No se pudo leer tu cuenta de Firebase. Revisa tu conexión y las reglas de Firestore.');
       });
 
-      return () => unsubProfile();
+      unsubscribeProfile = unsubProfile;
     });
 
-    return () => unsubscribe();
+    return () => { unsubscribe(); unsubscribeProfile?.(); };
   }, []);
 
   const signInWithGoogle = async () => {
@@ -129,7 +135,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error: unknown) {
       console.error('Google Sign In Error:', error);
-      throw error;
+      const authFailure = error as { code?: string; message?: string };
+      const code = authFailure?.code || '';
+      if (code === 'auth/unauthorized-domain') {
+        setAuthError(
+          'Error de configuración de Firebase (auth/unauthorized-domain): Este dominio (ej. localhost) no está en la lista de dominios autorizados en la Consola de Firebase. Ve a Firebase Console -> Authentication -> Settings -> Authorized domains y añade "localhost".'
+        );
+      } else if (code === 'auth/popup-blocked') {
+        setAuthError(
+          'El navegador bloqueó la ventana emergente de Google. Por favor permite las ventanas emergentes (pop-ups) para este sitio.'
+        );
+      } else if (code === 'auth/cancelled-popup-request') {
+        // user clicked again or popup was interrupted
+      } else if (code === 'auth/popup-closed-by-user') {
+        // user closed popup manually
+      } else {
+        setAuthError(
+          `Error al iniciar sesión con Google (${code || 'desconocido'}): ${authFailure?.message || ''}`
+        );
+      }
     }
   };
 
@@ -146,6 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user || !profile || profile.onboardingComplete || profile.role !== 'student') return;
     await setDoc(doc(db, 'users', user.uid), {
       requestedClassIds: [...new Set(classIds)],
+      enrollmentStatus: 'pending',
       onboardingComplete: true,
       updatedAt: new Date().toISOString(),
     }, { merge: true });

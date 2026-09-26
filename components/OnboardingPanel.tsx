@@ -13,9 +13,12 @@ export default function OnboardingPanel() {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => onSnapshot(collection(db, 'classes'), snapshot => {
+  useEffect(() => {
+    if (!user) return;
+    return onSnapshot(collection(db, 'classes'), snapshot => {
     setClasses(snapshot.docs.map(item => ({ ...item.data(), id: item.id } as AcademicClass)).filter(item => item.active));
-  }, () => setError('No se pudieron cargar las clases. Revisa tu conexión.')), []);
+    }, () => setError('No se pudieron cargar las clases. Revisa tu conexión.'));
+  }, [user]);
 
   if (!user) return <section className="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
     <p className="text-sm font-semibold text-amber-700">Paso 1 de 3 · Acceso</p>

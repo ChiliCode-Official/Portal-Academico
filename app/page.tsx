@@ -78,7 +78,7 @@ export default function HomePage() {
       </section>
 
       {/* Acceso Rápido a Portales por Materia con Animaciones */}
-      <QuickSubjectsBar />
+      <div id="materias" className="scroll-mt-24"><QuickSubjectsBar /></div>
 
       {/* Bienvenida Section - Neobrutalist Window Card */}
       <section className="py-12 px-4 sm:px-8 max-w-5xl mx-auto">
@@ -135,7 +135,7 @@ export default function HomePage() {
       </section>
 
       {/* Calendario Académico Institucional */}
-      <AcademicCalendar />
+      <div id="calendario" className="scroll-mt-24"><AcademicCalendar /></div>
 
       {/* Tienda de la Maestra - Tienda de Habilidades y Sellos Quick Access */}
       <section className="py-8 px-4 sm:px-8 max-w-5xl mx-auto mb-12">

@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/firebase/AuthContext';
 import TeacherPanel from '@/components/TeacherPanel';
 import StudentPanel from '@/components/StudentPanel';
 import TeacherShop from '@/components/TeacherShop';
-import DocumentCard from '@/components/DocumentCard';
+import { CourseDocuments, CourseDocumentCount } from '@/components/CourseContent';
 import { DocumentItem } from '@/lib/types';
 import {
   Award,
@@ -194,22 +194,12 @@ export default function DinamicaClientPage({ documents }: DinamicaClientPageProp
             <h2 className="text-xl font-bold text-[#1C1C1C] font-['Quicksand'] mb-6 flex items-center gap-2">
               <span>Documentación Oficial de Dinámica</span>
               <span className="text-xs font-mono font-normal text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                {documents.length} Archivos
+                <CourseDocumentCount category="dinamica" /> Archivos
               </span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {documents.map((doc) => (
-                <DocumentCard
-                  key={doc.id}
-                  title={doc.title}
-                  description={doc.description}
-                  fileUrl={doc.fileUrl}
-                  fileType={doc.fileType}
-                  isAvailable={doc.isAvailable}
-                  publishedAt={doc.publishedAt}
-                />
-              ))}
+              <CourseDocuments category="dinamica" />
             </div>
           </div>
 

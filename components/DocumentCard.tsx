@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FileText, Download, Eye, Clock, FileSpreadsheet, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import PDFViewerModal from '@/components/PDFViewerModal';
+import DocumentDownload from './DocumentDownload';
 
 interface DocumentCardProps {
   title: string;
@@ -99,15 +100,14 @@ export default function DocumentCard({
                 <span>Ver documento</span>
               </button>
 
-              <a
-                href={fileUrl}
-                download
+              <DocumentDownload
+                fileUrl={fileUrl}
+                title={title}
                 className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-[#E5E7EB] rounded-lg transition-colors"
-                title="Descargar archivo"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Descargar</span>
-              </a>
+              </DocumentDownload>
             </>
           ) : (
             <div className="w-full text-center py-1.5 text-xs text-[#4A4A4A] italic bg-slate-50 rounded-lg border border-slate-100">

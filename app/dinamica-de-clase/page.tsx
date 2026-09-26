@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Award, Layers, ArrowRight, ShieldCheck, FileText, CheckCircle, Flame, Droplets, Mountain, Wind, Sparkles } from 'lucide-react';
-import DocumentCard from '@/components/DocumentCard';
+import { CourseDocuments, CourseDocumentCount } from '@/components/CourseContent';
 import { getDocumentsByCategory } from '@/lib/firebase/db';
 
 export const metadata = {
@@ -156,22 +156,12 @@ export default async function DinamicaDeClasePage() {
             <Layers className="w-5 h-5 text-amber-500" />
             <span>Documentos Oficiales Descargables</span>
             <span className="text-xs font-mono font-normal text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-              {documents.length} Archivos
+              <CourseDocumentCount category="dinamica" /> Archivos
             </span>
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {documents.map((doc) => (
-              <DocumentCard
-                key={doc.id}
-                title={doc.title}
-                description={doc.description}
-                fileUrl={doc.fileUrl}
-                fileType={doc.fileType}
-                isAvailable={doc.isAvailable}
-                publishedAt={doc.publishedAt}
-              />
-            ))}
+            <CourseDocuments category="dinamica" />
           </div>
         </div>
       </div>

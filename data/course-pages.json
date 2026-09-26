@@ -1,0 +1,783 @@
+[
+  {
+    "id": "fisica--general",
+    "subjectId": "fisica",
+    "category": "general",
+    "href": "/fisica",
+    "label": "General & Syllabus",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Asignatura Curricular • Clave FIS-101"
+      },
+      {
+        "id": "text-2",
+        "value": "Física"
+      },
+      {
+        "id": "text-3",
+        "value": "Cátedra orientada a la fundamentación teórico-experimental en cinemática, dinámica, termofísica y electromagnetismo aplicada a problemas reales de ingeniería."
+      },
+      {
+        "id": "text-4",
+        "value": "Syllabus de la Asignatura"
+      },
+      {
+        "id": "text-5",
+        "value": "Documento Rector Semestral"
+      },
+      {
+        "id": "text-6",
+        "value": "El syllabus contiene la planeación didáctica por semanas, los objetivos de aprendizaje de cada unidad temáticas, el porcentaje ponderado de exámenes, bitácoras y proyectos finales, así como la bibliografía estándar sugerida."
+      },
+      {
+        "id": "text-7",
+        "value": "Accesos Clave de Laboratorio"
+      },
+      {
+        "id": "text-8",
+        "value": "Practicario de Laboratorio"
+      },
+      {
+        "id": "text-9",
+        "value": "Consulte la versión vigente del manual de prácticas experimentales y el histórico de referencia."
+      },
+      {
+        "id": "text-10",
+        "value": "Ir a Practicarios"
+      },
+      {
+        "id": "text-11",
+        "value": "Bitácora de Laboratorio"
+      },
+      {
+        "id": "text-12",
+        "value": "Formatos oficiales de registro individual, tablas de datos crudos y hojas de dispersión."
+      },
+      {
+        "id": "text-13",
+        "value": "Ir a Formatos de Bitácora"
+      },
+      {
+        "id": "text-14",
+        "value": "Reglamento de Laboratorio"
+      },
+      {
+        "id": "text-15",
+        "value": "Normas obligatorias de seguridad, bata blanca de algodón y protocolos de prevención de incidentes."
+      },
+      {
+        "id": "text-16",
+        "value": "Ver Reglamento Completo"
+      }
+    ],
+    "links": [
+      {
+        "id": "link-1",
+        "href": "/fisica/practicario"
+      },
+      {
+        "id": "link-2",
+        "href": "/fisica/bitacora-de-laboratorio"
+      },
+      {
+        "id": "link-3",
+        "href": "/fisica/reglamento-de-laboratorio"
+      }
+    ]
+  },
+  {
+    "id": "fisica--bitacora",
+    "subjectId": "fisica",
+    "category": "bitacora",
+    "href": "/fisica/bitacora-de-laboratorio",
+    "label": "Bitácora de Laboratorio",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Instrumento de Registro"
+      },
+      {
+        "id": "text-2",
+        "value": "Bitácora de Laboratorio"
+      },
+      {
+        "id": "text-3",
+        "value": "Formato de registro para prácticas de laboratorio. Ambos documento deben ser descargados e impresos por el estudiante antes de cada sesión práctica para el registro INDIVIDUAL de datos, observaciones y resultados experimentales."
+      },
+      {
+        "id": "text-4",
+        "value": "Requisito:"
+      },
+      {
+        "id": "text-5",
+        "value": "Presentar la bitácora impresa para cada una de las prácticas."
+      },
+      {
+        "id": "text-6",
+        "value": "Documentos para utilizar en el DESARROLLO de las prácticas. Recuerden que son opcionales y cada uno debe decidir la organización de su reporte en esta área."
+      },
+      {
+        "id": "text-7",
+        "value": "Formatos y Organizadores de Práctica ("
+      },
+      {
+        "id": "text-8",
+        "value": "Archivos)"
+      },
+      {
+        "id": "text-9",
+        "value": "Descargas Autorizadas"
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "fisica--herramientas",
+    "subjectId": "fisica",
+    "category": "herramientas",
+    "href": "/fisica/herramientas-digitales",
+    "label": "Herramientas Digitales",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Recursos Computacionales"
+      },
+      {
+        "id": "text-2",
+        "value": "Herramientas Digitales"
+      },
+      {
+        "id": "text-3",
+        "value": "Simuladores interactivos (PhET, GeoGebra, Tracker) y paquetes de modelado numérico para prácticas virtuales y verificación analítica."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "fisica--lectura-complementaria",
+    "subjectId": "fisica",
+    "category": "lectura-complementaria",
+    "href": "/fisica/lectura-complementaria",
+    "label": "Lectura Complementaria",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Extensión de Conocimiento"
+      },
+      {
+        "id": "text-2",
+        "value": "Lectura Complementaria"
+      },
+      {
+        "id": "text-3",
+        "value": "Materiales bibliográficos para profundizar en aplicaciones interdisciplinarias de la física en las ramas de la ingeniería contemporánea."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "fisica--lectura-obligatoria",
+    "subjectId": "fisica",
+    "category": "lectura-obligatoria",
+    "href": "/fisica/lectura-obligatoria",
+    "label": "Lectura Obligatoria",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Material Bibliográfico"
+      },
+      {
+        "id": "text-2",
+        "value": "Lectura Obligatoria"
+      },
+      {
+        "id": "text-3",
+        "value": "Lecturas académicas seleccionadas cuyo contenido será evaluado en los exámenes teóricos y aplicado en la resolución de problemas en aula."
+      },
+      {
+        "id": "text-4",
+        "value": "Primer Parcial"
+      },
+      {
+        "id": "text-5",
+        "value": "Descargas asignadas para el primer bloque evaluativo del semestre."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "fisica--practicario",
+    "subjectId": "fisica",
+    "category": "practicario",
+    "href": "/fisica/practicario",
+    "label": "Practicario",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Laboratorio Experimental"
+      },
+      {
+        "id": "text-2",
+        "value": "Practicario de Física"
+      },
+      {
+        "id": "text-3",
+        "value": "Manuales de prácticas experimentales para el desarrollo de competencias de medición, análisis de datos y modelación física."
+      },
+      {
+        "id": "text-4",
+        "value": "Aviso a los equipos de práctica:"
+      },
+      {
+        "id": "text-5",
+        "value": "Es indispensable leer la metodología y realizar la investigación previa indicada en el practicario antes de ingresar al laboratorio. No se permitirá el inicio de la práctica a equipos sin marco teórico resuelto."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "fisica--presentaciones",
+    "subjectId": "fisica",
+    "category": "presentaciones",
+    "href": "/fisica/presentaciones",
+    "label": "Presentaciones",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Diapositivas de Clase"
+      },
+      {
+        "id": "text-2",
+        "value": "Presentaciones"
+      },
+      {
+        "id": "text-3",
+        "value": "Diapositivas y notas visuales expuestas durante las cátedras magistrales organizadas por unidades temáticas."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "fisica--reglamento",
+    "subjectId": "fisica",
+    "category": "reglamento",
+    "href": "/fisica/reglamento-de-laboratorio",
+    "label": "Reglamento de Laboratorio",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Marco Normativo"
+      },
+      {
+        "id": "text-2",
+        "value": "Reglamento de Laboratorio"
+      },
+      {
+        "id": "text-3",
+        "value": "Lineamientos de observancia estricta para garantizar la integridad personal, el cuidado del equipo científico y la convivencia armónica durante las sesiones experimentales."
+      },
+      {
+        "id": "text-4",
+        "value": "Descarga y Lectura Oficial"
+      },
+      {
+        "id": "text-5",
+        "value": "Todo estudiante inscrito debe firmar la hoja de enterado del reglamento al inicio del semestre. Puede consultar el documento original a continuación:"
+      },
+      {
+        "id": "text-6",
+        "value": "Puntos Fundamentales del Reglamento"
+      },
+      {
+        "id": "text-7",
+        "value": "Uso de Bata y EPP:"
+      },
+      {
+        "id": "text-8",
+        "value": "Es obligatorio portar bata blanca de algodón 100% manga larga y calzado cerrado antiderrapante en cada práctica."
+      },
+      {
+        "id": "text-9",
+        "value": "Manejo de Alimentos:"
+      },
+      {
+        "id": "text-10",
+        "value": "Queda estrictamente prohibido ingerir alimentos, bebidas o mascar goma de mascar dentro del laboratorio."
+      },
+      {
+        "id": "text-11",
+        "value": "Revisión de Instrumental:"
+      },
+      {
+        "id": "text-12",
+        "value": "Cada equipo es responsable de inventariar y reportar oportunamente cualquier daño en los instrumentos antes de encender fuentes."
+      },
+      {
+        "id": "text-13",
+        "value": "Limpieza y Desconexión:"
+      },
+      {
+        "id": "text-14",
+        "value": "Al concluir la sesión, las mesas deben quedar completamente despejadas y las tomas de corriente desconectadas."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "fisica--rubricas",
+    "subjectId": "fisica",
+    "category": "rubricas",
+    "href": "/fisica/rubricas",
+    "label": "Rúbricas",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Física • Instrumentos de Calificación"
+      },
+      {
+        "id": "text-2",
+        "value": "Rúbricas"
+      },
+      {
+        "id": "text-3",
+        "value": "Matrices analíticas de evaluación con los descriptores cuantitativos y cualitativos para la calificación de reportes de laboratorio y proyectos integradores."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "sensores-e-instrumentacion--general",
+    "subjectId": "sensores-e-instrumentacion",
+    "category": "general",
+    "href": "/sensores-e-instrumentacion",
+    "label": "General & Syllabus",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Asignatura Curricular • Clave INS-305"
+      },
+      {
+        "id": "text-2",
+        "value": "Sensores e Instrumentación"
+      },
+      {
+        "id": "text-3",
+        "value": "Diseño e integración de sistemas de medición electrónica, adquisición de señales analógicas/digitales y acondicionamiento operacional."
+      },
+      {
+        "id": "text-4",
+        "value": "Syllabus y Guía de Cátedra"
+      },
+      {
+        "id": "text-5",
+        "value": "Documento Rector Semestral"
+      },
+      {
+        "id": "text-6",
+        "value": "Programa analítico de la asignatura: transducción física a eléctrica, filtros activos, amplificadores de instrumentación y convertidores ADC/DAC."
+      },
+      {
+        "id": "text-7",
+        "value": "Módulos de Laboratorio"
+      },
+      {
+        "id": "text-8",
+        "value": "Practicario de Sensores"
+      },
+      {
+        "id": "text-9",
+        "value": "Manual de pruebas y caracterización estática y dinámica de transductores."
+      },
+      {
+        "id": "text-10",
+        "value": "Ir a Practicario"
+      },
+      {
+        "id": "text-11",
+        "value": "Bitácoras de Medición"
+      },
+      {
+        "id": "text-12",
+        "value": "Hojas de registro individual de adquisición de señales y pruebas de linealidad."
+      },
+      {
+        "id": "text-13",
+        "value": "Descargar Formatos"
+      },
+      {
+        "id": "text-14",
+        "value": "Reglamento de Electrónica"
+      },
+      {
+        "id": "text-15",
+        "value": "Seguridad eléctrica, protección antiestática ESD y normativas de instrumental."
+      },
+      {
+        "id": "text-16",
+        "value": "Consultar Reglamento"
+      }
+    ],
+    "links": [
+      {
+        "id": "link-1",
+        "href": "/sensores-e-instrumentacion/practicario"
+      },
+      {
+        "id": "link-2",
+        "href": "/sensores-e-instrumentacion/bitacora-de-laboratorio"
+      },
+      {
+        "id": "link-3",
+        "href": "/sensores-e-instrumentacion/reglamento-de-laboratorio"
+      }
+    ]
+  },
+  {
+    "id": "sensores-e-instrumentacion--bitacora",
+    "subjectId": "sensores-e-instrumentacion",
+    "category": "bitacora",
+    "href": "/sensores-e-instrumentacion/bitacora-de-laboratorio",
+    "label": "Bitácora de Laboratorio",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Sensores e Instrumentación • Bitácoras de Medida"
+      },
+      {
+        "id": "text-2",
+        "value": "Bitácora de Laboratorio"
+      },
+      {
+        "id": "text-3",
+        "value": "Formato de registro para prácticas de laboratorio. Ambos documento deben ser descargados e impresos por el estudiante antes de cada sesión práctica para el registro INDIVIDUAL de datos, observaciones y resultados experimentales."
+      },
+      {
+        "id": "text-4",
+        "value": "Requisito:"
+      },
+      {
+        "id": "text-5",
+        "value": "Presentar la bitácora impresa para cada una de las prácticas."
+      },
+      {
+        "id": "text-6",
+        "value": "Documentos para utilizar en el DESARROLLO de las prácticas. Recuerden que son opcionales y cada uno debe decidir la organización de su reporte en esta área."
+      },
+      {
+        "id": "text-7",
+        "value": "Formatos Autorizados ("
+      },
+      {
+        "id": "text-8",
+        "value": "Archivos)"
+      },
+      {
+        "id": "text-9",
+        "value": "Descargas Oficiales"
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "sensores-e-instrumentacion--lectura-complementaria",
+    "subjectId": "sensores-e-instrumentacion",
+    "category": "lectura-complementaria",
+    "href": "/sensores-e-instrumentacion/lectura-complementaria",
+    "label": "Lectura Complementaria",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Sensores e Instrumentación • Bibliografía"
+      },
+      {
+        "id": "text-2",
+        "value": "Lectura Complementaria"
+      },
+      {
+        "id": "text-3",
+        "value": "Artículos científicos, notas de aplicación de fabricantes (Texas Instruments, Analog Devices) y estándares IEEE de instrumentación."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "sensores-e-instrumentacion--practicario",
+    "subjectId": "sensores-e-instrumentacion",
+    "category": "practicario",
+    "href": "/sensores-e-instrumentacion/practicario",
+    "label": "Practicario",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Sensores • Prácticas de Laboratorio"
+      },
+      {
+        "id": "text-2",
+        "value": "Practicario de Sensores e Instrumentación"
+      },
+      {
+        "id": "text-3",
+        "value": "Guía práctica de caracterización estática y dinámica de transductores resistivos, galgas extensiométricas, termopares, sensores capacitivos y ópticos."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "sensores-e-instrumentacion--presentaciones",
+    "subjectId": "sensores-e-instrumentacion",
+    "category": "presentaciones",
+    "href": "/sensores-e-instrumentacion/presentaciones",
+    "label": "Presentaciones",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Sensores e Instrumentación • Diapositivas"
+      },
+      {
+        "id": "text-2",
+        "value": "Presentaciones"
+      },
+      {
+        "id": "text-3",
+        "value": "Diapositivas correspondientes a las sesiones magistrales de modelación de sensores, circuitos puente y sistemas de adquisición digital."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "sensores-e-instrumentacion--reglamento",
+    "subjectId": "sensores-e-instrumentacion",
+    "category": "reglamento",
+    "href": "/sensores-e-instrumentacion/reglamento-de-laboratorio",
+    "label": "Reglamento de Laboratorio",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Sensores • Seguridad Operacional"
+      },
+      {
+        "id": "text-2",
+        "value": "Reglamento de Laboratorio"
+      },
+      {
+        "id": "text-3",
+        "value": "Normas para la manipulación correcta de fuentes de poder DC/AC, generadores de funciones, osciloscopios y circuitos integrados analógicos."
+      },
+      {
+        "id": "text-4",
+        "value": "Reglamento Técnico Oficial"
+      },
+      {
+        "id": "text-5",
+        "value": "Consulte y descargue la normativa aplicable a mesas de prueba electro-electrónicas:"
+      },
+      {
+        "id": "text-6",
+        "value": "Reglas Esenciales de Instrumentación"
+      },
+      {
+        "id": "text-7",
+        "value": "Cero Energía Durante el Cableado:"
+      },
+      {
+        "id": "text-8",
+        "value": "Todo circuito debe alambrarse con la fuente de alimentación apagada. Verifique dos veces las polaridades antes de energizar."
+      },
+      {
+        "id": "text-9",
+        "value": "Protección Contra Descargas ESD:"
+      },
+      {
+        "id": "text-10",
+        "value": "Es obligatorio aterrizar o utilizar pulseras antiestáticas al manipular transductores piezoeléctricos o amplificadores CMOS."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "economia-sostenible--general",
+    "subjectId": "economia-sostenible",
+    "category": "general",
+    "href": "/economia-sostenible",
+    "label": "General & Syllabus",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Asignatura Curricular • Clave ECO-204"
+      },
+      {
+        "id": "text-2",
+        "value": "Economía Sostenible"
+      },
+      {
+        "id": "text-3",
+        "value": "Análisis del impacto socioeconómico de la ingeniería, economía circular, evaluación de ciclo de vida (ACV) y mecanismos financieros para la mitigación del cambio climático."
+      },
+      {
+        "id": "text-4",
+        "value": "Enfoque de la Asignatura"
+      },
+      {
+        "id": "text-5",
+        "value": "La materia proporciona al estudiante de ingeniería las herramientas cuantitativas necesarias para modelar la viabilidad financiera de proyectos tecnológicos integrando externalidades ambientales y criterios ESG."
+      },
+      {
+        "id": "text-6",
+        "value": "Ejes Analíticos Principales:"
+      },
+      {
+        "id": "text-7",
+        "value": "Valor Presente Neto (VPN) y Tasa Interna de Retorno (TIR) Verde."
+      },
+      {
+        "id": "text-8",
+        "value": "Mercados de carbono, bonos sustentables y tributación ambiental."
+      },
+      {
+        "id": "text-9",
+        "value": "Diseño circular e innovación en cadenas de suministro."
+      },
+      {
+        "id": "text-10",
+        "value": "Cátedra con enfoque en los Objetivos de Desarrollo Sostenible (ODS - Agenda 2030)."
+      },
+      {
+        "id": "text-11",
+        "value": "Módulos del Curso"
+      },
+      {
+        "id": "text-12",
+        "value": "Lectura Complementaria"
+      },
+      {
+        "id": "text-13",
+        "value": "Informes de organismos internacionales (CEPAL, Banco Mundial, IRENA) sobre economía y desarrollo sustentable."
+      },
+      {
+        "id": "text-14",
+        "value": "Acceder a lecturas"
+      },
+      {
+        "id": "text-15",
+        "value": "Presentaciones de Cátedra"
+      },
+      {
+        "id": "text-16",
+        "value": "Material de soporte gráfico, estudios de caso y diapositivas de clase teórica."
+      },
+      {
+        "id": "text-17",
+        "value": "Ver diapositivas"
+      }
+    ],
+    "links": [
+      {
+        "id": "link-1",
+        "href": "/economia-sostenible/lectura-complementaria"
+      },
+      {
+        "id": "link-2",
+        "href": "/economia-sostenible/presentaciones"
+      }
+    ]
+  },
+  {
+    "id": "economia-sostenible--lectura-complementaria",
+    "subjectId": "economia-sostenible",
+    "category": "lectura-complementaria",
+    "href": "/economia-sostenible/lectura-complementaria",
+    "label": "Lectura Complementaria",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Economía Sostenible • Bibliografía de Apoyo"
+      },
+      {
+        "id": "text-2",
+        "value": "Lectura Complementaria"
+      },
+      {
+        "id": "text-3",
+        "value": "Artículos y análisis sectoriales sobre modelos circulares, políticas públicas energéticas e impacto ambiental."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "economia-sostenible--presentaciones",
+    "subjectId": "economia-sostenible",
+    "category": "presentaciones",
+    "href": "/economia-sostenible/presentaciones",
+    "label": "Presentaciones",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Economía Sostenible • Diapositivas"
+      },
+      {
+        "id": "text-2",
+        "value": "Presentaciones"
+      },
+      {
+        "id": "text-3",
+        "value": "Materiales didácticos y resúmenes ejecutivos presentados en las sesiones de análisis económico."
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "pura-energia--general",
+    "subjectId": "pura-energia",
+    "category": "general",
+    "href": "/pura-energia",
+    "label": "General & Syllabus",
+    "fields": [
+      {
+        "id": "text-1",
+        "value": "Iniciativa Académica & Transversal • Clave ENE-402"
+      },
+      {
+        "id": "text-2",
+        "value": "Pura Energía"
+      },
+      {
+        "id": "text-3",
+        "value": "Hub de proyectos de investigación aplicada, divulgación científica y desarrollo tecnológico enfocado en la física y economía de las energías limpias."
+      },
+      {
+        "id": "text-4",
+        "value": "Innovación y Desarrollo"
+      },
+      {
+        "id": "text-5",
+        "value": "Prototipos estudiantiles para aprovechamiento fotovoltaico, eólico y almacenamiento electroquímico."
+      },
+      {
+        "id": "text-6",
+        "value": "Divulgación Científica"
+      },
+      {
+        "id": "text-7",
+        "value": "Seminarios periódicos sobre eficiencia energética y nuevas tecnologías de conversión renovable."
+      },
+      {
+        "id": "text-8",
+        "value": "Vinculación Técnica"
+      },
+      {
+        "id": "text-9",
+        "value": "Colaboración con centros de investigación y laboratorios de prueba para proyectos terminales."
+      },
+      {
+        "id": "text-10",
+        "value": "Repositorio de Materiales del Proyecto"
+      },
+      {
+        "id": "text-11",
+        "value": "Los recursos documentales, guías de construcción de prototipos y memorias de cálculo se alojarán en este portal."
+      }
+    ],
+    "links": []
+  }
+]

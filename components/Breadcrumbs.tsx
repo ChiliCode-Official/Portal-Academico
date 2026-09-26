@@ -25,13 +25,12 @@ export default function Breadcrumbs() {
   const pathname = usePathname();
 
   // If we are at root, breadcrumbs aren't necessary
-  if (!pathname || pathname === '/') return null;
+  if (!pathname || pathname === '/' || pathname === '/panel' || pathname === '/registro') return null;
 
   const pathSegments = pathname.split('/').filter(Boolean);
 
-  let accumulatedPath = '';
-  const breadcrumbs = pathSegments.map((segment) => {
-    accumulatedPath += `/${segment}`;
+  const breadcrumbs = pathSegments.map((segment, index) => {
+    const accumulatedPath = `/${pathSegments.slice(0, index + 1).join('/')}`;
     const label =
       routeNameMap[segment] ||
       decodeURIComponent(segment)

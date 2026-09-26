@@ -46,6 +46,7 @@ export const viewport = {
 };
 
 import { AuthProvider } from '@/lib/firebase/AuthContext';
+import { CourseContentProvider, CoursePageBoundary } from '@/components/CourseContent';
 
 export default function RootLayout({
   children,
@@ -59,10 +60,12 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-[#F9F9F9] text-[#1C1C1C] antialiased selection:bg-slate-200">
         <AuthProvider>
+          <CourseContentProvider>
           <Header />
           <Breadcrumbs />
-          <main className="flex-1 flex flex-col">{children}</main>
+          <main className="flex-1 flex flex-col"><CoursePageBoundary>{children}</CoursePageBoundary></main>
           <Footer />
+          </CourseContentProvider>
         </AuthProvider>
       </body>
     </html>

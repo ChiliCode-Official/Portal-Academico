@@ -45,10 +45,15 @@ service cloud.firestore {
       allow update: if isTeacher() || (isUser(userId) &&
         resource.data.role == 'student' && resource.data.onboardingComplete == false &&
         request.resource.data.onboardingComplete == true &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['requestedClassIds', 'onboardingComplete', 'updatedAt']) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['requestedClassIds', 'onboardingComplete', 'enrollmentStatus', 'updatedAt']) &&
         request.resource.data.requestedClassIds is list &&
         request.resource.data.requestedClassIds.size() > 0 &&
-        request.resource.data.requestedClassIds.size() <= 8);
+        request.resource.data.requestedClassIds.size() <= 8 &&
+        request.resource.data.enrollmentStatus == 'pending') ||
+        (isUser(userId) && resource.data.role == 'student' &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stampsBalance', 'totalStampsEarned']) &&
+          request.resource.data.stampsBalance == resource.data.stampsBalance + 1 &&
+          request.resource.data.totalStampsEarned == resource.data.totalStampsEarned + 1);
       allow delete: if isTeacher();
     }
 
@@ -68,13 +73,19 @@ service cloud.firestore {
     match /qrCodes/{qrId} {
       allow read: if isInstitutionalEmail();
       allow create, delete: if isTeacher();
-      allow update: if isTeacher();
+      allow update: if isTeacher() || (isUser(request.auth.uid) &&
+        resource.data.active == true && request.resource.data.active == false &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimedBy', 'claimedCount']) &&
+        request.resource.data.claimedBy.hasAll(resource.data.claimedBy) &&
+        request.resource.data.claimedBy.size() == resource.data.claimedBy.size() + 1 &&
+        request.resource.data.claimedBy.hasAll([request.auth.uid]) &&
+        request.resource.data.claimedCount == resource.data.claimedCount + 1);
     }
 
     // 5. Historial de Reclamaciones de Sellos
     match /claims/{claimId} {
       allow read: if isInstitutionalEmail() && (resource.data.studentUid == request.auth.uid || isTeacher());
-      allow create: if isTeacher();
+      allow create: if isTeacher() || (isUser(request.resource.data.studentUid) && request.resource.data.studentUid == request.auth.uid);
       allow update, delete: if isTeacher();
     }
 
@@ -92,7 +103,27 @@ service cloud.firestore {
       allow read: if isInstitutionalEmail();
       allow write: if isTeacher();
     }
+    match /shopCategories/{id} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
     match /calendarEvents/{id} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
+    match /calendarSettings/{id} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
+    match /calendarLegend/{id} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
+    match /documents/{id} {
+      allow read: if (isInstitutionalEmail() && resource.data.published == true) || isTeacher();
+      allow write: if isTeacher();
+    }
+    match /coursePages/{id} {
       allow read: if isInstitutionalEmail();
       allow write: if isTeacher();
     }

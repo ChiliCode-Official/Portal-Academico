@@ -8,6 +8,7 @@ export interface UserProfile {
   role: UserRole;
   selectedClassId?: string; // Class ID currently enrolled in
   requestedClassIds?: string[];
+  enrollmentStatus?: 'pending' | 'approved' | 'rejected';
   classIds?: string[];
   onboardingComplete?: boolean;
   stampsBalance: number;    // Available stamps to spend in teacher shop

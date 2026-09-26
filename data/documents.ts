@@ -1,6 +1,17 @@
 import { DocumentItem } from '@/lib/types';
 
 export const documentsData: DocumentItem[] = [
+  {
+    id: 'institucional-calendario',
+    title: 'Calendario académico institucional',
+    description: 'Versión PDF del calendario institucional.',
+    category: 'general',
+    subjectId: 'general',
+    fileUrl: '/docs/institucional/calendario-escolar-2026.pdf',
+    fileType: 'pdf',
+    publishedAt: '2026-08-01',
+    isAvailable: true,
+  },
   // Dinámica de Clase
   {
     id: 'dinamica-de-clase-oficial',

@@ -1,126 +1,72 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  Sparkles,
-  ShoppingBag,
-  Award,
-  Zap,
-  Shield,
-  Clock,
-  FileCheck,
-  Star,
-  Gift,
-  ArrowRight,
-  Info,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  BookOpen
-} from 'lucide-react';
-import { shopItemsData, ShopItem } from '@/data/shopItems';
-import { useAuth } from '@/lib/firebase/AuthContext';
-import { doc, updateDoc, increment, addDoc, collection, onSnapshot } from 'firebase/firestore';
+import { Award, ShoppingBag } from 'lucide-react';
+import { collection, doc, increment, onSnapshot, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
-import './EcomCard.css';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { mergeShopCategories, readShopProduct, ShopCategory, ShopProduct } from '@/lib/shop';
+import { ProductCard } from './ProductAppearance';
+import './HamsterClosedShop.css';
 
-interface TeacherShopProps {
-  userStamps?: number;
-}
-
-const iconComponentMap: Record<string, React.ReactNode> = {
-  zap: <Zap className="w-5 h-5 text-amber-500" />,
-  shield: <Shield className="w-5 h-5 text-emerald-500" />,
-  clock: <Clock className="w-5 h-5 text-blue-500" />,
-  'file-check': <FileCheck className="w-5 h-5 text-indigo-500" />,
-  star: <Star className="w-5 h-5 text-yellow-500 fill-yellow-400" />,
-  gift: <Gift className="w-5 h-5 text-purple-500" />,
-  sparkles: <Sparkles className="w-5 h-5 text-rose-500" />,
-  award: <Award className="w-5 h-5 text-orange-500" />,
-};
-
-const categoryBadgeMap: Record<ShopItem['category'], { label: string; color: string }> = {
-  examen: { label: 'Exámenes', color: 'bg-rose-50 text-rose-700 border-rose-200' },
-  tarea: { label: 'Tareas y Prórrogas', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  laboratorio: { label: 'Laboratorio', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  participacion: { label: 'Participación', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  comodin: { label: 'Comodín Especial', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-};
+interface TeacherShopProps { userStamps?: number }
+type ShopState = { uid: string; products: ShopProduct[]; openClasses: string[]; categories: ShopCategory[]; stamps: Record<string, string>; ready: Record<string, boolean>; errors: Record<string, string> };
+const emptyState: ShopState = { uid: '', products: [], openClasses: [], categories: [], stamps: {}, ready: {}, errors: {} };
 
 export default function TeacherShop({ userStamps }: TeacherShopProps) {
   const { user, profile } = useAuth();
-  const [managedProducts, setManagedProducts] = useState<{ id: string; title: string; costStamps: number; active: boolean; classId: string }[]>([]);
-  const [openClasses, setOpenClasses] = useState<string[]>([]);
+  const [state, setState] = useState<ShopState>(emptyState);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [activeId, setActiveId] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const [purchaseError, setPurchaseError] = useState('');
   useEffect(() => {
     if (!user) return;
-    const a = onSnapshot(collection(db, 'shopItems'), snap => setManagedProducts(snap.docs.map(d => d.data() as { id: string; title: string; costStamps: number; active: boolean; classId: string })));
-    const b = onSnapshot(collection(db, 'shopSettings'), snap => setOpenClasses(snap.docs.filter(d => d.data().open).map(d => d.id)));
-    return () => { a(); b(); };
+    const uid = user.uid;
+    let active = true;
+    const update = (name: string, values: Partial<ShopState>, error = '') => {
+      if (active) setState(previous => {
+        const current = previous.uid === uid ? previous : { ...emptyState, uid };
+        return { ...current, ...values, ready: { ...current.ready, [name]: true }, errors: { ...current.errors, [name]: error } };
+      });
+    };
+    const fail = (name: string) => () => update(name, {}, 'No se pudo cargar ' + name + '. Revisa la sesión y los permisos de Firebase.');
+    const subscriptions = [
+      onSnapshot(collection(db, 'shopItems'), snap => update('productos', { products: snap.docs.map(item => readShopProduct(item.id, item.data())) }), fail('productos')),
+      onSnapshot(collection(db, 'shopSettings'), snap => update('apertura', { openClasses: snap.docs.filter(item => item.data().open === true).map(item => item.id) }), fail('apertura')),
+      onSnapshot(collection(db, 'shopCategories'), snap => update('categorías', { categories: snap.docs.map(item => ({ id: item.id, label: String(item.data().label || item.id), active: item.data().active !== false })) }), fail('categorías')),
+      onSnapshot(collection(db, 'stampTypes'), snap => update('sellos', { stamps: Object.fromEntries(snap.docs.map(item => [item.id, String(item.data().name || '')])) }), fail('sellos')),
+    ];
+    return () => { active = false; subscriptions.forEach(stop => stop()); };
   }, [user]);
-  const initialBalance = profile ? profile.stampsBalance : (userStamps ?? 5);
-  const [stamps, setStamps] = useState<number>(initialBalance);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [activeItem, setActiveItem] = useState<ShopItem | null>(null);
-  const [redeemSuccess, setRedeemSuccess] = useState<string | null>(null);
+  const data = state.uid === user?.uid ? state : emptyState;
+  const error = Object.values(data.errors).filter(Boolean).join(' ');
+  const loading = Boolean(user) && Object.keys(data.ready).length < 4;
+  const stamps = profile?.stampsBalance ?? userStamps ?? 0;
+  const allCategories = mergeShopCategories(data.categories);
+  const categories = [{ id: 'all', label: 'Todos los canjes' }, ...allCategories.filter(item => item.active)];
+  const effectiveCategory = categories.some(item => item.id === selectedCategory) ? selectedCategory : 'all';
+  const hasOpenStore = (profile?.classIds || []).some(id => data.openClasses.includes(id));
+  const storeClosed = Boolean(user) && !loading && !error && !hasOpenStore;
+  const availableProducts = data.products.filter(item => item.active && profile?.classIds?.includes(item.classId) && data.openClasses.includes(item.classId));
+  const filteredItems = availableProducts.filter(item => effectiveCategory === 'all' || item.category === effectiveCategory);
+  const activeItem = availableProducts.find(item => item.id === activeId);
 
-  React.useEffect(() => {
-    if (profile) {
-      setStamps(profile.stampsBalance);
-    }
-  }, [profile?.stampsBalance]);
-
-  const categories = [
-    { id: 'all', label: 'Todos los Canjes' },
-    { id: 'examen', label: 'Exámenes' },
-    { id: 'tarea', label: 'Tareas' },
-    { id: 'laboratorio', label: 'Laboratorio' },
-    { id: 'participacion', label: 'Puntos' },
-    { id: 'comodin', label: 'Especiales' },
-  ];
-
-  const filteredItems: ShopItem[] = [];
-  const availableProducts = managedProducts.filter(item => item.active && profile?.classIds?.includes(item.classId) && openClasses.includes(item.classId));
-
-  const handleRedeem = async (item: ShopItem) => {
-    if (stamps < item.costStamps) {
-      setActiveItem(item);
-      return;
-    }
-
-    setStamps((prev) => prev - item.costStamps);
-
-    if (user?.uid) {
-      try {
-        await updateDoc(doc(db, 'users', user.uid), {
-          stampsBalance: increment(-item.costStamps),
-        });
-
-        await addDoc(collection(db, 'purchases'), {
-          studentUid: user.uid,
-          studentName: profile?.displayName || user.displayName || 'Estudiante',
-          studentEmail: user.email,
-          itemId: item.id,
-          itemTitle: item.title,
-          costStamps: item.costStamps,
-          purchasedAt: new Date().toISOString(),
-          status: 'canjeado',
-        });
-      } catch (e) {
-        console.warn('Purchase saved locally:', e);
-      }
-    }
-
-    setRedeemSuccess(`¡Canjeaste exitosamente: "${item.title}" por ${item.costStamps} sellos!`);
-    setTimeout(() => setRedeemSuccess(null), 4000);
+  const handleRedeem = async (item: ShopProduct) => {
+    if (!user || busy || stamps < item.costStamps) return;
+    setBusy(true); setPurchaseError(''); setMessage('');
+    try {
+      const batch = writeBatch(db);
+      batch.update(doc(db, 'users', user.uid), { stampsBalance: increment(-item.costStamps) });
+      batch.set(doc(collection(db, 'purchases')), { studentUid: user.uid, studentName: profile?.displayName || user.displayName || 'Estudiante', studentEmail: user.email || '', itemId: item.id, itemTitle: item.title, costStamps: item.costStamps, purchasedAt: new Date().toISOString(), status: 'canjeado' });
+      await batch.commit();
+      setMessage('Canje registrado: ' + item.title + '.'); setActiveId('');
+    } catch { setPurchaseError('No se pudo registrar el canje. No se descontaron sellos. Consulta a la maestra o revisa los permisos de Firebase.'); }
+    finally { setBusy(false); }
   };
-
-  return (
-    <div id="tienda-de-la-maestra" className="w-full">
-      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5">
-        <h2 className="text-lg font-bold">Productos de tus clases</h2>
-        {!user ? <p className="mt-2 text-sm">Inicia sesión para ver la tienda.</p> : availableProducts.length === 0 ? <p className="mt-2 text-sm">La maestra aún no ha abierto productos para tus clases.</p> : <div className="mt-3 grid gap-3 sm:grid-cols-2">{availableProducts.map(item => <div key={item.id} className="rounded-xl border p-3"><strong>{item.title}</strong><p>{item.costStamps} sellos</p></div>)}</div>}
-      </div>
+  return <div id="tienda-de-la-maestra" className="w-full">
       {/* Wallet / Stamp Balance Card */}
       <div className="bg-white rounded-3xl p-5 sm:p-6 mb-8 border-2 border-black shadow-[5px_5px_0_#000000]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -149,24 +95,16 @@ export default function TeacherShop({ userStamps }: TeacherShopProps) {
         </div>
       </div>
 
-      {/* Success Notification */}
-      {redeemSuccess && (
-        <div className="mb-6 p-4 bg-emerald-50 border-2 border-emerald-400 rounded-xl flex items-center gap-3 text-emerald-900 text-xs sm:text-sm animate-in fade-in slide-in-from-top-2">
-          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-          <div className="flex-1 font-medium">{redeemSuccess}</div>
-          <span className="text-[11px] font-mono font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
-            REGISTRADO
-          </span>
-        </div>
-      )}
 
       {/* Categories Filter Bar (Touch / Mobile Friendly) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
         {categories.map((cat) => {
-          const isActive = selectedCategory === cat.id;
+          const isActive = effectiveCategory === cat.id;
           return (
             <button
               key={cat.id}
+              type="button"
+              aria-pressed={effectiveCategory === cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-3.5 py-2 text-xs font-semibold rounded-xl whitespace-nowrap transition-all select-none ${
                 isActive
@@ -180,156 +118,31 @@ export default function TeacherShop({ userStamps }: TeacherShopProps) {
         })}
       </div>
 
-      {/* Items Grid: Neobrutalist E-commerce Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {filteredItems.map((item) => {
-          const canAfford = stamps >= item.costStamps;
-          const badge = categoryBadgeMap[item.category];
 
-          return (
-            <div
-              key={item.id}
-              className="uiverse-ecom-card group"
-            >
-              {/* Card Img area with decorative badge and icon */}
-              <div className="uiverse-ecom-card-img">
-                <span
-                  className={`absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase font-mono border ${badge.color}`}
-                >
-                  {badge.label}
-                </span>
+      {!user && <p className="mb-6 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700">Inicia sesión con tu cuenta institucional para ver la tienda de tus clases.</p>}
+      {loading && <p role="status" className="p-5 text-sm text-slate-600">Consultando la tienda…</p>}
+      {error && <p role="alert" className="mb-6 rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">{error}</p>}
+      {storeClosed && <div className="closed-shop-stage" aria-label="La tienda está cerrada">
+        <div className="wheel-and-hamster" role="img" aria-label="Hámster esperando a que abra la tienda"><div className="wheel" /><div className="hamster"><div className="hamster__body"><div className="hamster__head"><div className="hamster__ear" /><div className="hamster__eye" /><div className="hamster__nose" /></div><div className="hamster__limb hamster__limb--fr" /><div className="hamster__limb hamster__limb--fl" /><div className="hamster__limb hamster__limb--br" /><div className="hamster__limb hamster__limb--bl" /><div className="hamster__tail" /></div></div><div className="spoke" /></div>
+        <p className="mt-5 text-center font-bold text-slate-700">La tienda está cerrada por ahora</p>
+        <p className="mt-1 text-center text-sm text-slate-500">La maestra publicará los productos cuando estén disponibles.</p>
+      </div>}
 
-                <div className="p-3 bg-white border-2 border-slate-900 rounded-xl shadow-xs group-hover:scale-110 transition-transform">
-                  {iconComponentMap[item.iconName] || <Sparkles className="w-6 h-6 text-amber-500" />}
-                </div>
-
-                {item.isPopular && (
-                  <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 border border-slate-900 font-mono">
-                    Top
-                  </span>
-                )}
-
-                {item.stampTypeRequired && (
-                  <span className={`absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider font-mono border ${
-                    item.stampTypeRequired === 'Tierra'
-                      ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                      : 'bg-blue-100 text-blue-900 border-blue-300'
-                  }`}>
-                    {item.stampTypeRequired === 'Tierra' ? '🌱 Tierra' : '💧 Agua'}
-                  </span>
-                )}
-              </div>
-
-              {/* Title & Description */}
-              <div className="space-y-1.5">
-                <div className="uiverse-card-title">
-                  {item.title}
-                </div>
-                <div className="uiverse-card-subtitle" title={item.description}>
-                  {item.description}
-                </div>
-              </div>
-
-              {/* Condition / Stock limit info */}
-              <div className="text-[10px] text-slate-500 bg-slate-50 border border-slate-200/80 rounded-md p-1.5 line-clamp-1 italic">
-                {item.condition}
-              </div>
-
-              {/* Divider */}
-              <hr className="uiverse-card-divider" />
-
-              {/* Footer with Price and Cart Button */}
-              <div className="uiverse-card-footer">
-                <div className="uiverse-card-price">
-                  <span>Sellos:</span> {item.costStamps}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleRedeem(item)}
-                  title={canAfford ? `Canjear por ${item.costStamps} sellos` : `Requiere ${item.costStamps} sellos`}
-                  className={`uiverse-card-btn ${canAfford ? 'can-afford' : ''}`}
-                >
-                  {/* SVG Cart from Uiverse.io */}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z" />
-                    <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z" />
-                    <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z" />
-                    <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Info / Rules Footer Modal or Card */}
-      {activeItem && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-amber-100 rounded-lg">
-                  <Award className="w-5 h-5 text-amber-700" />
-                </div>
-                <h3 className="font-bold text-base font-['Quicksand'] text-slate-900">
-                  {activeItem.title}
-                </h3>
-              </div>
-              <button
-                onClick={() => setActiveItem(null)}
-                className="text-slate-400 hover:text-slate-700 text-lg p-1"
-              >
-                &times;
-              </button>
-            </div>
-
-            <p className="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed">
-              {activeItem.description}
-            </p>
-
-            <div className="space-y-2 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100 mb-5">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Costo oficial:</span>
-                <span className="font-bold text-slate-900 font-mono">
-                  {activeItem.costStamps} Sellos Formativos
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Tus sellos actuales:</span>
-                <span className="font-bold text-amber-600 font-mono">
-                  {stamps} Sellos
-                </span>
-              </div>
-              {stamps < activeItem.costStamps && (
-                <div className="pt-2 text-[11px] text-rose-600 font-medium border-t border-slate-200">
-                  ⚠️ Te faltan {activeItem.costStamps - stamps} sellos para canjear este beneficio. Acude a las clases prácticas y mantén tu bitácora sellada.
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setStamps((s) => s + activeItem.costStamps);
-                  handleRedeem(activeItem);
-                  setActiveItem(null);
-                }}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-['Quicksand'] transition-all"
-              >
-                Simular canje (+{activeItem.costStamps} sellos)
-              </button>
-              <button
-                onClick={() => setActiveItem(null)}
-                className="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
+      {message && <p role="status" className="mb-5 rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-900">{message}</p>}
+      {user && !loading && !error && hasOpenStore && <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {filteredItems.map(item => <ProductCard key={item.id} product={item} categoryLabel={allCategories.find(category => category.id === item.category)?.label || 'Especiales'} stampLabel={data.stamps[item.stampTypeId] || 'Cualquier sello'} action={<button type="button" onClick={() => { setActiveId(item.id); setPurchaseError(''); }} className="uiverse-card-btn" title={'Ver ' + item.title} aria-label={'Ver ' + item.title}><ShoppingBag className="!fill-none" /></button>} />)}
+        {!filteredItems.length && <p className="col-span-full rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-600">{availableProducts.length ? 'No hay productos en este filtro. Prueba con Todos los canjes.' : 'La tienda está abierta. La maestra aún no ha publicado productos para tus clases.'}</p>}
+      </div>}
+      {activeItem && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs" role="dialog" aria-modal="true" aria-label={activeItem.title}>
+        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+          <h3 className="text-lg font-bold text-slate-950">{activeItem.title}</h3>
+          <p className="mt-2 text-sm text-slate-600">{activeItem.description}</p>
+          <p className="mt-3 text-sm text-slate-700">{activeItem.condition}</p>
+          <p className="mt-4 font-semibold">{activeItem.costStamps} sellos · {data.stamps[activeItem.stampTypeId] || 'Cualquier sello'}</p>
+          {stamps < activeItem.costStamps && <p className="mt-2 text-sm text-red-700">No tienes suficientes sellos para este producto.</p>}
+          {purchaseError && <p role="alert" className="mt-3 text-sm text-red-700">{purchaseError}</p>}
+          <div className="mt-5 flex gap-2"><button disabled={busy || stamps < activeItem.costStamps} type="button" onClick={() => void handleRedeem(activeItem)} className="rounded-xl bg-amber-400 px-4 py-2 font-bold text-slate-950 disabled:opacity-50">{busy ? 'Registrando…' : 'Confirmar canje'}</button><button disabled={busy} type="button" onClick={() => setActiveId('')} className="rounded-xl border border-slate-300 px-4 py-2 text-sm">Cerrar</button></div>
         </div>
-      )}
-    </div>
-  );
+      </div>}
+    </div>;
 }

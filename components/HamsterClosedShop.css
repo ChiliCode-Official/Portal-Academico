@@ -1,0 +1,15 @@
+.closed-shop-stage{margin:0 0 2rem;border:2px solid #0f172a;border-radius:1.5rem;background:linear-gradient(135deg,#fff7d6,#fff);padding:2.5rem 1rem;display:flex;flex-direction:column;align-items:center;box-shadow:4px 4px #0f172a}
+.wheel-and-hamster{--dur:1s;position:relative;width:12rem;height:12rem;font-size:10px}
+.wheel,.spoke{position:absolute;border-radius:50%}
+.wheel{inset:1.5em;border:.5em solid #78350f;box-shadow:0 0 0 .35em #f59e0b,0 0 0 .7em #92400e;animation:hamster-rotate var(--dur) linear infinite}
+.spoke{width:.8em;height:9em;left:calc(50% - .4em);top:1.5em;background:#a16207;transform-origin:50% 100%;animation:hamster-rotate var(--dur) linear infinite}
+.hamster{position:absolute;width:7em;height:5em;left:2.5em;top:5.2em;animation:hamster-bob var(--dur) ease-in-out infinite}
+.hamster__body{position:absolute;inset:1em .5em .5em;background:#d97706;border-radius:48% 45% 45% 50%;transform:rotate(-8deg)}
+.hamster__head{position:absolute;width:3.5em;height:3.2em;right:-1em;top:-1em;background:#f59e0b;border-radius:50% 50% 45% 45%}
+.hamster__ear{position:absolute;width:1em;height:1em;left:.3em;top:-.35em;border-radius:50%;background:#f59e0b;border:.25em solid #92400e}
+.hamster__eye{position:absolute;width:.4em;height:.4em;right:.9em;top:.9em;border-radius:50%;background:#111827}
+.hamster__nose{position:absolute;width:.45em;height:.35em;right:-.2em;top:1.5em;border-radius:50%;background:#451a03}
+.hamster__limb{position:absolute;width:1.2em;height:.55em;background:#b45309;border-radius:50%;bottom:.2em}.hamster__limb--fr{right:1em}.hamster__limb--fl{left:1.3em}.hamster__limb--br{right:2.7em}.hamster__limb--bl{left:.2em}
+.hamster__tail{position:absolute;width:1.1em;height:1.1em;left:-.4em;top:1.3em;border:.35em solid #b45309;border-left-color:transparent;border-radius:50%}
+@keyframes hamster-rotate{to{transform:rotate(360deg)}}
+@keyframes hamster-bob{50%{transform:translateY(-.3em)}}
