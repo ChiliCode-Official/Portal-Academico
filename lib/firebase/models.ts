@@ -7,6 +7,9 @@ export interface UserProfile {
   photoURL: string | null;
   role: UserRole;
   selectedClassId?: string; // Class ID currently enrolled in
+  requestedClassIds?: string[];
+  classIds?: string[];
+  onboardingComplete?: boolean;
   stampsBalance: number;    // Available stamps to spend in teacher shop
   totalStampsEarned: number;
   createdAt: string;

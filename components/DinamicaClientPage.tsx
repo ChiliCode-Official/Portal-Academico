@@ -26,7 +26,7 @@ interface DinamicaClientPageProps {
 }
 
 export default function DinamicaClientPage({ documents }: DinamicaClientPageProps) {
-  const { user, profile, isTeacher, signInWithGoogle, toggleDevRole, authError } = useAuth();
+  const { user, profile, isTeacher, signInWithGoogle, authError } = useAuth();
   const [activeTab, setActiveTab] = useState<'hub' | 'shop' | 'docs'>('hub');
 
   return (
@@ -40,9 +40,9 @@ export default function DinamicaClientPage({ documents }: DinamicaClientPageProp
           </div>
 
           {/* Quick role switcher / test helper */}
-          {user && (
+          {false && user && (
             <button
-              onClick={() => toggleDevRole()}
+              onClick={() => {}}
               className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors flex items-center gap-1.5"
               title="Cambia entre la vista de la Maestra y la del Alumno"
             >

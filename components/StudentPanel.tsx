@@ -20,7 +20,7 @@ import { defaultClasses } from '@/lib/firebase/initialData';
 import QRScannerModal from '@/components/QRScannerModal';
 import CartLoader from '@/components/CartLoader';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { doc, getDoc, updateDoc, setDoc, increment, collection, addDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment, collection, addDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 
 interface StudentPanelProps {
@@ -28,8 +28,8 @@ interface StudentPanelProps {
 }
 
 export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
-  const { user, profile, updateUserClass } = useAuth();
-  const [classes, setClasses] = useState<AcademicClass[]>(defaultClasses);
+  const { user, profile } = useAuth();
+  const [classes, setClasses] = useState<AcademicClass[]>([]);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [scanResult, setScanResult] = useState<{
     success: boolean;
@@ -39,10 +39,13 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
   } | null>(null);
   const [isValidating, setIsValidating] = useState(false);
 
-  const selectedClass = classes.find((c) => c.id === profile?.selectedClassId) || classes[0];
+  useEffect(() => onSnapshot(collection(db, 'classes'), snap => setClasses(snap.docs.map(item => ({ ...item.data(), id: item.id } as AcademicClass)))), []);
+  const approvedClasses = classes.filter(c => profile?.classIds?.includes(c.id));
+  const selectedClass = approvedClasses[0];
 
   // Handle scanned QR code
   const handleScanSuccess = async (rawCode: string) => {
+    if (!selectedClass) { setScanResult({ success: false, message: 'Tu clase aún no ha sido aprobada por la maestra.' }); return; }
     setIsScannerOpen(false);
     setIsValidating(true);
     setScanResult(null);
@@ -74,6 +77,10 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
       }
 
       const qrData = qrSnap.data();
+      if (!profile?.classIds?.includes(qrData.classId)) {
+        setScanResult({ success: false, message: 'Este código corresponde a una clase en la que no estás inscrito.' });
+        return;
+      }
 
       // Check if expired
       if (Date.now() > qrData.expiresAt) {
@@ -134,13 +141,10 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
         stampValue: stampVal,
       });
     } catch (err: unknown) {
-      console.warn('Scan verification fallback (offline or local):', err);
-      // Demo fallback if firestore fails
+      console.error('No se pudo acreditar el sello:', err);
       setScanResult({
-        success: true,
-        message: '¡Sello verificado con éxito! Se ha sumado a tu acumulado.',
-        stampName: 'Sello Formativo de Dinámica',
-        stampValue: 1,
+        success: false,
+        message: 'No se pudo acreditar el sello. Intenta de nuevo o avisa a la maestra.',
       });
     } finally {
       setIsValidating(false);
@@ -270,14 +274,14 @@ export default function StudentPanel({ onGoToShop }: StudentPanelProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {classes.map((cls) => {
+          {approvedClasses.map((cls) => {
             const isSelected = selectedClass.id === cls.id;
             return (
               <button
                 key={cls.id}
                 type="button"
-                onClick={() => updateUserClass(cls.id)}
-                className={`p-4 rounded-2xl text-left border transition-all flex flex-col justify-between active:scale-[0.98] ${
+                disabled
+                className={`p-4 rounded-2xl text-left border transition-all flex flex-col justify-between ${
                   isSelected
                     ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-amber-400'
                     : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-400 hover:bg-white'

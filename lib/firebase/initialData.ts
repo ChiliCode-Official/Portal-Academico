@@ -9,7 +9,7 @@ export const defaultClasses: AcademicClass[] = [
     schedule: 'Lun, Mié, Vie • 08:00 - 10:00',
     classroom: 'Laboratorio L-204 & Aula A-12',
     description: 'Cinemática, dinámica, termofísica y electromagnetismo aplicada a ingeniería.',
-    teacherEmail: 'prof.xochitl.zapata@institucion.edu.mx',
+    teacherEmail: 'xochitl_zapatam@my.uvm.edu.mx',
     active: true,
   },
   {
@@ -20,7 +20,7 @@ export const defaultClasses: AcademicClass[] = [
     schedule: 'Mar, Jue • 11:00 - 13:30',
     classroom: 'Laboratorio de Electrónica y Sistemas',
     description: 'Metrología, acondicionamiento de señales y sistemas de adquisición DAQ.',
-    teacherEmail: 'prof.xochitl.zapata@institucion.edu.mx',
+    teacherEmail: 'xochitl_zapatam@my.uvm.edu.mx',
     active: true,
   },
   {
@@ -31,7 +31,7 @@ export const defaultClasses: AcademicClass[] = [
     schedule: 'Lun, Mié • 14:00 - 16:00',
     classroom: 'Edificio B • Aula Magna 3',
     description: 'Ciclos de vida, evaluación socioeconómica y sustentabilidad industrial.',
-    teacherEmail: 'prof.xochitl.zapata@institucion.edu.mx',
+    teacherEmail: 'xochitl_zapatam@my.uvm.edu.mx',
     active: true,
   },
   {
@@ -42,7 +42,7 @@ export const defaultClasses: AcademicClass[] = [
     schedule: 'Viernes • 11:00 - 15:00',
     classroom: 'Taller de Energías Renovables',
     description: 'Prototipado, investigación y modelado de sistemas energéticos.',
-    teacherEmail: 'prof.xochitl.zapata@institucion.edu.mx',
+    teacherEmail: 'xochitl_zapatam@my.uvm.edu.mx',
     active: true,
   },
 ];

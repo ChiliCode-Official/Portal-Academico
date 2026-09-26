@@ -2,9 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, signInWithPopup, signOut as fbSignOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { auth, googleProvider, db } from './config';
-import { UserProfile, UserRole } from './models';
+import { UserProfile } from './models';
 
 interface AuthContextType {
   user: User | null;
@@ -14,8 +14,7 @@ interface AuthContextType {
   clearAuthError: () => void;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  updateUserClass: (classId: string) => Promise<void>;
-  toggleDevRole: () => Promise<void>; // Useful for testing teacher panel easily
+  requestClasses: (classIds: string[]) => Promise<void>;
   isTeacher: boolean;
 }
 
@@ -27,8 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   clearAuthError: () => {},
   signInWithGoogle: async () => {},
   signOut: async () => {},
-  updateUserClass: async () => {},
-  toggleDevRole: async () => {},
+  requestClasses: async () => {},
   isTeacher: false,
 });
 
@@ -47,9 +45,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Validar dominio institucional obligatorio: @my.uvm.edu.mx
+      // Validar dominio institucional obligatorio (@my.uvm.edu.mx) o correo autorizado de la maestra
       const userEmail = (currentUser.email || '').toLowerCase().trim();
-      const isAllowedDomain = userEmail.endsWith('@my.uvm.edu.mx');
+      const isTeacherEmail =
+        userEmail === 'lrodricg30@gmail.com' || userEmail === 'xochitl_zapatam@my.uvm.edu.mx';
+      const isAllowedDomain = userEmail.endsWith('@my.uvm.edu.mx') || isTeacherEmail;
 
       if (!isAllowedDomain) {
         setAuthError(
@@ -72,18 +72,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (snapshot.exists()) {
           setProfile(snapshot.data() as UserProfile);
         } else {
-          // Detect teacher if email includes xochitl or prof
-          const isProf = userEmail.includes('xochitl') || userEmail.includes('prof') || userEmail.includes('docente');
+          const isProf = isTeacherEmail;
 
           const newProfile: UserProfile = {
             uid: currentUser.uid,
             email: currentUser.email,
-            displayName: currentUser.displayName || 'Estudiante UVM',
+            displayName: currentUser.displayName || (isProf ? 'Prof. Xochitl M. Zapata M.' : 'Estudiante UVM'),
             photoURL: currentUser.photoURL,
             role: isProf ? 'teacher' : 'student',
-            selectedClassId: 'fisica-101-g1',
-            stampsBalance: isProf ? 99 : 5, // starter stamps for testing
-            totalStampsEarned: isProf ? 99 : 5,
+            requestedClassIds: [],
+            classIds: [],
+            onboardingComplete: isProf,
+            stampsBalance: 0,
+            totalStampsEarned: 0,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
@@ -92,27 +93,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await setDoc(userDocRef, newProfile);
             setProfile(newProfile);
           } catch (e) {
-            console.warn('Could not persist profile in Firestore yet, using fallback:', e);
-            setProfile(newProfile);
+            console.error('No se pudo crear el perfil:', e);
+            setAuthError('No se pudo guardar tu cuenta. Intenta de nuevo.');
           }
         }
         setLoading(false);
       }, (error) => {
         console.warn('Firestore onSnapshot error:', error);
-        // Fallback profile if offline
-        const isProf = userEmail.includes('xochitl') || userEmail.includes('prof');
-        setProfile({
-          uid: currentUser.uid,
-          email: currentUser.email,
-          displayName: currentUser.displayName || 'Estudiante UVM',
-          photoURL: currentUser.photoURL,
-          role: isProf ? 'teacher' : 'student',
-          selectedClassId: 'fisica-101-g1',
-          stampsBalance: 5,
-          totalStampsEarned: 5,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
+        setAuthError('No se pudo leer tu cuenta. Revisa tu conexión.');
+        setProfile(null);
         setLoading(false);
       });
 
@@ -127,7 +116,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const email = (result.user.email || '').toLowerCase().trim();
-      if (!email.endsWith('@my.uvm.edu.mx')) {
+      const isTeacherEmail =
+        email === 'lrodricg30@gmail.com' || email === 'xochitl_zapatam@my.uvm.edu.mx';
+      if (!email.endsWith('@my.uvm.edu.mx') && !isTeacherEmail) {
         setAuthError(
           `Acceso denegado: El correo "${result.user.email}" no pertenece al dominio oficial @my.uvm.edu.mx.`
         );
@@ -151,30 +142,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateUserClass = async (classId: string) => {
-    if (!user || !profile) return;
-    const updated = { ...profile, selectedClassId: classId, updatedAt: new Date().toISOString() };
-    setProfile(updated);
-    try {
-      await setDoc(doc(db, 'users', user.uid), { selectedClassId: classId, updatedAt: new Date().toISOString() }, { merge: true });
-    } catch (e) {
-      console.warn('Error saving selected class to Firestore:', e);
-    }
+  const requestClasses = async (classIds: string[]) => {
+    if (!user || !profile || profile.onboardingComplete || profile.role !== 'student') return;
+    await setDoc(doc(db, 'users', user.uid), {
+      requestedClassIds: [...new Set(classIds)],
+      onboardingComplete: true,
+      updatedAt: new Date().toISOString(),
+    }, { merge: true });
   };
 
-  const toggleDevRole = async () => {
-    if (!user || !profile) return;
-    const newRole: UserRole = profile.role === 'teacher' ? 'student' : 'teacher';
-    const updated = { ...profile, role: newRole, updatedAt: new Date().toISOString() };
-    setProfile(updated);
-    try {
-      await setDoc(doc(db, 'users', user.uid), { role: newRole, updatedAt: new Date().toISOString() }, { merge: true });
-    } catch (e) {
-      console.warn('Error updating role:', e);
-    }
-  };
-
-  const isTeacher = profile?.role === 'teacher';
+  const userEmailLower = user?.email?.toLowerCase().trim();
+  const isTeacher =
+    (userEmailLower === 'lrodricg30@gmail.com' ||
+      userEmailLower === 'xochitl_zapatam@my.uvm.edu.mx') ||
+    profile?.role === 'teacher';
 
   return (
     <AuthContext.Provider
@@ -186,8 +167,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clearAuthError: () => setAuthError(null),
         signInWithGoogle,
         signOut,
-        updateUserClass,
-        toggleDevRole,
+        requestClasses,
         isTeacher,
       }}
     >

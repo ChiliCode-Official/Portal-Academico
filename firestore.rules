@@ -7,32 +7,48 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // REQUISITO ESTRICTO DE DOMINIO INSTITUCIONAL:
-    // Solo se permite acceso si el correo termina en @my.uvm.edu.mx
-    function isInstitutionalEmail() {
+    // REQUISITO DE ACCESO: Dominio institucional UVM o correo docente autorizado
+    function isAllowedEmail() {
       return isAuthenticated() &&
         request.auth.token.email != null &&
-        request.auth.token.email.matches('.*@my[.]uvm[.]edu[.]mx$');
+        (request.auth.token.email.matches('.*@my[.]uvm[.]edu[.]mx$') ||
+         request.auth.token.email == 'lrodricg30@gmail.com');
+    }
+
+    function isInstitutionalEmail() {
+      return isAllowedEmail();
     }
 
     function isUser(uid) {
-      return isInstitutionalEmail() && request.auth.uid == uid;
+      return isAllowedEmail() && request.auth.uid == uid;
     }
 
-    // Identificar a la maestra dentro del dominio institucional
+    // Identificar a la maestra (autorizada por correo)
     function isTeacher() {
-      return isInstitutionalEmail() && (
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
-        request.auth.token.email.matches('.*xochitl.*@my[.]uvm[.]edu[.]mx$') ||
-        request.auth.token.email.matches('.*prof.*@my[.]uvm[.]edu[.]mx$')
-      );
+      return isAuthenticated() &&
+        request.auth.token.email != null &&
+        (request.auth.token.email == 'lrodricg30@gmail.com' ||
+         request.auth.token.email == 'xochitl_zapatam@my.uvm.edu.mx');
     }
 
     // 1. Colección de Perfiles de Usuarios
     match /users/{userId} {
-      allow read: if isInstitutionalEmail();
-      allow create: if isUser(userId);
-      allow update: if isUser(userId) || isTeacher();
+      allow read: if isUser(userId) || isTeacher();
+      allow create: if isUser(userId) &&
+        request.resource.data.uid == userId &&
+        request.resource.data.email == request.auth.token.email &&
+        request.resource.data.role == (isTeacher() ? 'teacher' : 'student') &&
+        request.resource.data.classIds == [] &&
+        request.resource.data.requestedClassIds == [] &&
+        request.resource.data.stampsBalance == 0 &&
+        request.resource.data.totalStampsEarned == 0;
+      allow update: if isTeacher() || (isUser(userId) &&
+        resource.data.role == 'student' && resource.data.onboardingComplete == false &&
+        request.resource.data.onboardingComplete == true &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['requestedClassIds', 'onboardingComplete', 'updatedAt']) &&
+        request.resource.data.requestedClassIds is list &&
+        request.resource.data.requestedClassIds.size() > 0 &&
+        request.resource.data.requestedClassIds.size() <= 8);
       allow delete: if isTeacher();
     }
 
@@ -52,21 +68,33 @@ service cloud.firestore {
     match /qrCodes/{qrId} {
       allow read: if isInstitutionalEmail();
       allow create, delete: if isTeacher();
-      allow update: if isInstitutionalEmail();
+      allow update: if isTeacher();
     }
 
     // 5. Historial de Reclamaciones de Sellos
     match /claims/{claimId} {
       allow read: if isInstitutionalEmail() && (resource.data.studentUid == request.auth.uid || isTeacher());
-      allow create: if isInstitutionalEmail() && request.resource.data.studentUid == request.auth.uid;
+      allow create: if isTeacher();
       allow update, delete: if isTeacher();
     }
 
     // 6. Historial de Canjes en la Tienda
     match /purchases/{purchaseId} {
       allow read: if isInstitutionalEmail() && (resource.data.studentUid == request.auth.uid || isTeacher());
-      allow create: if isInstitutionalEmail() && request.resource.data.studentUid == request.auth.uid;
+      allow create: if isTeacher();
       allow update, delete: if isTeacher();
+    }
+    match /shopSettings/{id} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
+    match /shopItems/{id} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
+    }
+    match /calendarEvents/{id} {
+      allow read: if isInstitutionalEmail();
+      allow write: if isTeacher();
     }
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { shopItemsData, ShopItem } from '@/data/shopItems';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { doc, updateDoc, increment, addDoc, collection } from 'firebase/firestore';
+import { doc, updateDoc, increment, addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import './EcomCard.css';
 
@@ -50,6 +50,14 @@ const categoryBadgeMap: Record<ShopItem['category'], { label: string; color: str
 
 export default function TeacherShop({ userStamps }: TeacherShopProps) {
   const { user, profile } = useAuth();
+  const [managedProducts, setManagedProducts] = useState<{ id: string; title: string; costStamps: number; active: boolean; classId: string }[]>([]);
+  const [openClasses, setOpenClasses] = useState<string[]>([]);
+  useEffect(() => {
+    if (!user) return;
+    const a = onSnapshot(collection(db, 'shopItems'), snap => setManagedProducts(snap.docs.map(d => d.data() as { id: string; title: string; costStamps: number; active: boolean; classId: string })));
+    const b = onSnapshot(collection(db, 'shopSettings'), snap => setOpenClasses(snap.docs.filter(d => d.data().open).map(d => d.id)));
+    return () => { a(); b(); };
+  }, [user]);
   const initialBalance = profile ? profile.stampsBalance : (userStamps ?? 5);
   const [stamps, setStamps] = useState<number>(initialBalance);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -71,9 +79,8 @@ export default function TeacherShop({ userStamps }: TeacherShopProps) {
     { id: 'comodin', label: 'Especiales' },
   ];
 
-  const filteredItems = shopItemsData.filter((item) =>
-    selectedCategory === 'all' ? true : item.category === selectedCategory
-  );
+  const filteredItems: ShopItem[] = [];
+  const availableProducts = managedProducts.filter(item => item.active && profile?.classIds?.includes(item.classId) && openClasses.includes(item.classId));
 
   const handleRedeem = async (item: ShopItem) => {
     if (stamps < item.costStamps) {
@@ -110,6 +117,10 @@ export default function TeacherShop({ userStamps }: TeacherShopProps) {
 
   return (
     <div id="tienda-de-la-maestra" className="w-full">
+      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5">
+        <h2 className="text-lg font-bold">Productos de tus clases</h2>
+        {!user ? <p className="mt-2 text-sm">Inicia sesión para ver la tienda.</p> : availableProducts.length === 0 ? <p className="mt-2 text-sm">La maestra aún no ha abierto productos para tus clases.</p> : <div className="mt-3 grid gap-3 sm:grid-cols-2">{availableProducts.map(item => <div key={item.id} className="rounded-xl border p-3"><strong>{item.title}</strong><p>{item.costStamps} sellos</p></div>)}</div>}
+      </div>
       {/* Wallet / Stamp Balance Card */}
       <div className="bg-white rounded-3xl p-5 sm:p-6 mb-8 border-2 border-black shadow-[5px_5px_0_#000000]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

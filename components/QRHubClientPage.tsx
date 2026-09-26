@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function QRHubClientPage() {
-  const { user, profile, isTeacher, signInWithGoogle, toggleDevRole, authError } = useAuth();
+  const { user, profile, isTeacher, signInWithGoogle, authError } = useAuth();
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-10">
@@ -29,9 +29,9 @@ export default function QRHubClientPage() {
           </div>
 
           {/* Quick role switcher / test helper */}
-          {user && (
+          {false && user && (
             <button
-              onClick={() => toggleDevRole()}
+              onClick={() => {}}
               className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors flex items-center gap-1.5 shadow-2xs"
               title="Cambia entre la vista de la Maestra y la del Alumno"
             >

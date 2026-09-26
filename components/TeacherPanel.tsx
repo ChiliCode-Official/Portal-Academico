@@ -23,6 +23,7 @@ import QRCodeDisplay from '@/components/QRCodeDisplay';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { collection, addDoc, getDocs, doc, setDoc, deleteDoc, query, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
+import TeacherAdministration from '@/components/TeacherAdministration';
 
 export default function TeacherPanel() {
   const { user, profile } = useAuth();
@@ -89,8 +90,8 @@ export default function TeacherPanel() {
       stampValue: stampObj.value,
       classId: classObj.id,
       className: classObj.name,
-      teacherUid: user?.uid || 'prof-xochitl',
-      teacherEmail: user?.email || 'prof.xochitl.zapata@institucion.edu.mx',
+      teacherUid: user?.uid || '',
+      teacherEmail: user?.email || 'xochitl_zapatam@my.uvm.edu.mx',
       createdAt: Date.now(),
       expiresAt: expiresAt,
       claimedCount: 0,
@@ -101,7 +102,10 @@ export default function TeacherPanel() {
     try {
       await setDoc(doc(db, 'qrCodes', qrData.code), qrData);
     } catch (e) {
-      console.warn('Could not save QR to Firestore, using client state:', e);
+      console.error('No se pudo guardar el QR:', e);
+      setStatusMsg('No se pudo generar el QR. Revisa la conexión e intenta de nuevo.');
+      setIsGenerating(false);
+      return;
     }
 
     setActiveQR(qrData);
@@ -123,7 +127,7 @@ export default function TeacherPanel() {
       group: newClassGroup.trim() || 'Grupo Regular',
       schedule: newClassSchedule.trim() || 'Horario a definir',
       classroom: newClassRoom.trim() || 'Laboratorio',
-      teacherEmail: user?.email || 'prof.xochitl.zapata@institucion.edu.mx',
+      teacherEmail: user?.email || 'xochitl_zapatam@my.uvm.edu.mx',
       active: true,
     };
 
@@ -161,6 +165,7 @@ export default function TeacherPanel() {
 
   return (
     <div className="w-full space-y-8">
+      <TeacherAdministration />
       {/* Teacher Welcome Header */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E5E7EB] hover:border-slate-300 shadow-sm transition-all">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
